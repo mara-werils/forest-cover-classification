@@ -1,0 +1,15 @@
+# Data is downloaded by the code (see README); only the 1,000-row sample is versioned.
+data/raw/
+data/processed/
+# Models are re-created by `python main.py --all` (best model is ~tens of MB).
+models/*.joblib
+# Local artefacts
+reports/prediction_history.json
+reports/full_run.log
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+.venv/
+venv/
+.ipynb_checkpoints/
