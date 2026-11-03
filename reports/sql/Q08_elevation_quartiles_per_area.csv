@@ -1,0 +1,17 @@
+wilderness,quartile,min_elev,max_elev,spruce_fir_pct,lodgepole_pct,krummholz_pct
+Cache la Poudre,1,1859,2188,0.0,0.4,0.0
+Cache la Poudre,2,2188,2313,0.0,2.9,0.0
+Cache la Poudre,3,2313,2409,0.0,3.1,0.0
+Cache la Poudre,4,2409,2654,0.0,26.4,0.0
+Comanche Peak,1,2270,2820,7.4,53.8,0.0
+Comanche Peak,2,2820,2997,22.9,72.1,0.1
+Comanche Peak,3,2997,3160,48.3,51.6,0.1
+Comanche Peak,4,3160,3858,59.6,19.9,20.5
+Neota,1,2945,3168,62.2,37.8,0.0
+Neota,2,3168,3240,72.8,27.2,0.0
+Neota,3,3240,3319,57.9,40.7,1.4
+Neota,4,3319,3647,56.0,14.6,29.4
+Rawah,1,2473,2870,10.1,84.9,0.0
+Rawah,2,2870,3002,23.2,75.9,0.0
+Rawah,3,3002,3151,54.9,45.0,0.1
+Rawah,4,3151,3686,73.9,18.4,7.7

@@ -1,0 +1,6 @@
+{
+  "pandas_seconds_incl_parquet_read": 0.088,
+  "sqlite_seconds": 0.432,
+  "results_identical": true,
+  "groups": 17
+}

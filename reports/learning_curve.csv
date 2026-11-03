@@ -1,0 +1,16 @@
+model,train_rows,f1_macro,train_seconds
+logreg,5000,0.5575,0.35
+logreg,20000,0.5502,1.29
+logreg,80000,0.5521,7.41
+logreg,200000,0.5482,14.8
+logreg,464809,0.5478,43.24
+random_forest,5000,0.6488,0.58
+random_forest,20000,0.7738,2.34
+random_forest,80000,0.8788,9.32
+random_forest,200000,0.9222,24.78
+random_forest,464809,0.9489,62.31
+lightgbm,5000,0.6857,31.29
+lightgbm,20000,0.8201,56.99
+lightgbm,80000,0.9051,83.35
+lightgbm,200000,0.9361,123.94
+lightgbm,464809,0.9558,171.77

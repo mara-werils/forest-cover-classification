@@ -1,0 +1,13 @@
+feature,importance_mean,importance_std
+Elevation,0.684,0.0042
+Horizontal_Distance_To_Roadways,0.3495,0.0063
+Horizontal_Distance_To_Fire_Points,0.3222,0.0048
+Wilderness,0.2391,0.0068
+Soil,0.1623,0.0037
+Horizontal_Distance_To_Hydrology,0.137,0.006
+Vertical_Distance_To_Hydrology,0.0909,0.0047
+Aspect,0.0354,0.0036
+Hillshade_9am,0.0191,0.0016
+Hillshade_3pm,0.0081,0.0005
+Hillshade_Noon,0.0066,0.0016
+Slope,0.0015,0.0011

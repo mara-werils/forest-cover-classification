@@ -1,0 +1,13 @@
+query,title,features,rows,seconds
+Q01_class_distribution,Class distribution with share of total,"JOIN, GROUP BY, window SUM() OVER ()",7,0.184
+Q02_terrain_by_class_and_area,Average terrain per cover type and wilderness area,"2 JOINs, GROUP BY, HAVING",17,0.734
+Q03_dominant_class_per_soil,Dominant cover type of every frequent soil type,"CTE, JOIN, GROUP BY/HAVING, ROW_NUMBER() OVER (PARTITION BY)",31,0.384
+Q04_elevation_bands,Cover-type mix by 200 m elevation band,"CTE, CASE, GROUP BY, window share within band",41,0.493
+Q05_climatic_zone_vs_class,Cover types per climatic zone of the soil,"3 JOINs through soil_type, GROUP BY",34,0.778
+Q06_classes_above_overall_mean,"Classes whose mean elevation is above the overall mean, and spread","Subquery in FROM, scalar subquery in WHERE, JOIN, GROUP BY",2,0.259
+Q07_rank_areas_by_road_distance,Rank of wilderness areas by distance to roads within each class,"CTE, JOIN, RANK() OVER (PARTITION BY ... ORDER BY)",17,0.427
+Q08_elevation_quartiles_per_area,Class mix in elevation quartiles inside each wilderness area,"Subquery in FROM, NTILE() OVER (PARTITION BY), GROUP BY",16,1.504
+Q09_rare_soils,Rare soil types (< 1000 cells) and the classes they host,"JOIN, GROUP BY, HAVING, GROUP_CONCAT",9,0.208
+Q10_recall_per_class,Per-class recall of every model on the test split,"4 JOINs, CTE, GROUP BY, conditional aggregation",42,3.696
+Q11_top_confusions,Top-2 confusions per true class for the best model,"CTE, JOINs, ROW_NUMBER() OVER (PARTITION BY), subquery",14,0.241
+Q12_error_rate_by_area_and_band,Error rate of the best model by wilderness area and elevation band,"CTE, JOINs, GROUP BY/HAVING, LAG() OVER",16,0.376

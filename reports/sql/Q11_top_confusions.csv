@@ -1,0 +1,15 @@
+true_class,predicted_as,n,errors_of_class
+Lodgepole Pine,Spruce/Fir,1149,1448
+Lodgepole Pine,Aspen,148,1448
+Spruce/Fir,Lodgepole Pine,974,1089
+Spruce/Fir,Krummholz,92,1089
+Ponderosa Pine,Douglas-fir,71,160
+Ponderosa Pine,Lodgepole Pine,52,160
+Douglas-fir,Ponderosa Pine,91,137
+Douglas-fir,Lodgepole Pine,23,137
+Aspen,Lodgepole Pine,70,99
+Aspen,Spruce/Fir,12,99
+Krummholz,Spruce/Fir,62,73
+Krummholz,Lodgepole Pine,11,73
+Cottonwood/Willow,Ponderosa Pine,33,57
+Cottonwood/Willow,Douglas-fir,24,57

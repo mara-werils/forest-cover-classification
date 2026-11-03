@@ -1,0 +1,43 @@
+model,cover_type,n_test,recall
+baseline_dummy,Aspen,1899,0.0
+baseline_dummy,Cottonwood/Willow,549,0.0
+baseline_dummy,Douglas-fir,3473,0.0
+baseline_dummy,Krummholz,4102,0.0
+baseline_dummy,Ponderosa Pine,7151,0.0
+baseline_dummy,Spruce/Fir,42368,0.0
+baseline_dummy,Lodgepole Pine,56661,1.0
+hist_gb,Lodgepole Pine,56661,0.4045
+hist_gb,Spruce/Fir,42368,0.5005
+hist_gb,Ponderosa Pine,7151,0.5083
+hist_gb,Douglas-fir,3473,0.571
+hist_gb,Aspen,1899,0.7062
+hist_gb,Cottonwood/Willow,549,0.7432
+hist_gb,Krummholz,4102,0.8089
+lightgbm,Cottonwood/Willow,549,0.8962
+lightgbm,Aspen,1899,0.9479
+lightgbm,Douglas-fir,3473,0.9606
+lightgbm,Spruce/Fir,42368,0.9743
+lightgbm,Lodgepole Pine,56661,0.9744
+lightgbm,Ponderosa Pine,7151,0.9776
+lightgbm,Krummholz,4102,0.9822
+lightgbm_unweighted,Cottonwood/Willow,549,0.8689
+lightgbm_unweighted,Aspen,1899,0.9026
+lightgbm_unweighted,Douglas-fir,3473,0.9577
+lightgbm_unweighted,Spruce/Fir,42368,0.9703
+lightgbm_unweighted,Krummholz,4102,0.9739
+lightgbm_unweighted,Ponderosa Pine,7151,0.9757
+lightgbm_unweighted,Lodgepole Pine,56661,0.9813
+logreg,Aspen,1899,0.0226
+logreg,Douglas-fir,3473,0.2902
+logreg,Cottonwood/Willow,549,0.4299
+logreg,Krummholz,4102,0.6212
+logreg,Spruce/Fir,42368,0.7042
+logreg,Ponderosa Pine,7151,0.7993
+logreg,Lodgepole Pine,56661,0.8037
+random_forest,Aspen,1899,0.8715
+random_forest,Cottonwood/Willow,549,0.8816
+random_forest,Douglas-fir,3473,0.9312
+random_forest,Krummholz,4102,0.9644
+random_forest,Spruce/Fir,42368,0.9684
+random_forest,Ponderosa Pine,7151,0.9744
+random_forest,Lodgepole Pine,56661,0.9812

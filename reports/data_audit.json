@@ -1,0 +1,245 @@
+{
+  "shape": {
+    "rows": 581012,
+    "columns": 57
+  },
+  "missing_values": {},
+  "duplicates": {
+    "exact_duplicate_rows": 0,
+    "duplicate_feature_vectors": 0,
+    "feature_vectors_with_conflicting_labels": 0
+  },
+  "one_hot_integrity": {
+    "wilderness": {
+      "rows_with_none": 0,
+      "rows_with_several": 0,
+      "never_used_columns": []
+    },
+    "soil": {
+      "rows_with_none": 0,
+      "rows_with_several": 0,
+      "never_used_columns": []
+    }
+  },
+  "range_violations": {
+    "Aspect": 0,
+    "Slope": 0,
+    "Hillshade_9am": 0,
+    "Hillshade_Noon": 0,
+    "Hillshade_3pm": 0,
+    "Horizontal_Distance_To_Hydrology": 0,
+    "Horizontal_Distance_To_Roadways": 0,
+    "Horizontal_Distance_To_Fire_Points": 0
+  },
+  "iqr_outliers": {
+    "Elevation": {
+      "q1": 2809.0,
+      "q3": 3163.0,
+      "lower_fence": 2278.0,
+      "upper_fence": 3694.0,
+      "outliers": 15569,
+      "outliers_pct": 2.68
+    },
+    "Aspect": {
+      "q1": 58.0,
+      "q3": 260.0,
+      "lower_fence": -245.0,
+      "upper_fence": 563.0,
+      "outliers": 0,
+      "outliers_pct": 0.0
+    },
+    "Slope": {
+      "q1": 9.0,
+      "q3": 18.0,
+      "lower_fence": -4.5,
+      "upper_fence": 31.5,
+      "outliers": 15316,
+      "outliers_pct": 2.64
+    },
+    "Horizontal_Distance_To_Hydrology": {
+      "q1": 108.0,
+      "q3": 384.0,
+      "lower_fence": -306.0,
+      "upper_fence": 798.0,
+      "outliers": 14557,
+      "outliers_pct": 2.51
+    },
+    "Vertical_Distance_To_Hydrology": {
+      "q1": 7.0,
+      "q3": 69.0,
+      "lower_fence": -86.0,
+      "upper_fence": 162.0,
+      "outliers": 31463,
+      "outliers_pct": 5.42
+    },
+    "Horizontal_Distance_To_Roadways": {
+      "q1": 1106.0,
+      "q3": 3328.0,
+      "lower_fence": -2227.0,
+      "upper_fence": 6661.0,
+      "outliers": 669,
+      "outliers_pct": 0.12
+    },
+    "Hillshade_9am": {
+      "q1": 198.0,
+      "q3": 231.0,
+      "lower_fence": 148.5,
+      "upper_fence": 280.5,
+      "outliers": 17433,
+      "outliers_pct": 3.0
+    },
+    "Hillshade_Noon": {
+      "q1": 213.0,
+      "q3": 237.0,
+      "lower_fence": 177.0,
+      "upper_fence": 273.0,
+      "outliers": 15672,
+      "outliers_pct": 2.7
+    },
+    "Hillshade_3pm": {
+      "q1": 119.0,
+      "q3": 168.0,
+      "lower_fence": 45.5,
+      "upper_fence": 241.5,
+      "outliers": 7832,
+      "outliers_pct": 1.35
+    },
+    "Horizontal_Distance_To_Fire_Points": {
+      "q1": 1024.0,
+      "q3": 2550.0,
+      "lower_fence": -1265.0,
+      "upper_fence": 4839.0,
+      "outliers": 31157,
+      "outliers_pct": 5.36
+    }
+  },
+  "suspicious_values": {
+    "hillshade_3pm_zero": 1338,
+    "hillshade_9am_zero": 13,
+    "aspect_equals_360": 51,
+    "negative_vertical_distance": 55143
+  },
+  "class_balance": {
+    "counts": {
+      "Spruce/Fir": 211840,
+      "Lodgepole Pine": 283301,
+      "Ponderosa Pine": 35754,
+      "Cottonwood/Willow": 2747,
+      "Aspen": 9493,
+      "Douglas-fir": 17367,
+      "Krummholz": 20510
+    },
+    "shares_pct": {
+      "Spruce/Fir": 36.46,
+      "Lodgepole Pine": 48.76,
+      "Ponderosa Pine": 6.15,
+      "Cottonwood/Willow": 0.47,
+      "Aspen": 1.63,
+      "Douglas-fir": 2.99,
+      "Krummholz": 3.53
+    },
+    "imbalance_ratio_max_min": 103.1
+  },
+  "describe": {
+    "Elevation": {
+      "count": 581012.0,
+      "mean": 2959.37,
+      "std": 279.98,
+      "min": 1859.0,
+      "25%": 2809.0,
+      "50%": 2996.0,
+      "75%": 3163.0,
+      "max": 3858.0
+    },
+    "Aspect": {
+      "count": 581012.0,
+      "mean": 155.66,
+      "std": 111.91,
+      "min": 0.0,
+      "25%": 58.0,
+      "50%": 127.0,
+      "75%": 260.0,
+      "max": 360.0
+    },
+    "Slope": {
+      "count": 581012.0,
+      "mean": 14.1,
+      "std": 7.49,
+      "min": 0.0,
+      "25%": 9.0,
+      "50%": 13.0,
+      "75%": 18.0,
+      "max": 66.0
+    },
+    "Horizontal_Distance_To_Hydrology": {
+      "count": 581012.0,
+      "mean": 269.43,
+      "std": 212.55,
+      "min": 0.0,
+      "25%": 108.0,
+      "50%": 218.0,
+      "75%": 384.0,
+      "max": 1397.0
+    },
+    "Vertical_Distance_To_Hydrology": {
+      "count": 581012.0,
+      "mean": 46.42,
+      "std": 58.3,
+      "min": -173.0,
+      "25%": 7.0,
+      "50%": 30.0,
+      "75%": 69.0,
+      "max": 601.0
+    },
+    "Horizontal_Distance_To_Roadways": {
+      "count": 581012.0,
+      "mean": 2350.15,
+      "std": 1559.25,
+      "min": 0.0,
+      "25%": 1106.0,
+      "50%": 1997.0,
+      "75%": 3328.0,
+      "max": 7117.0
+    },
+    "Hillshade_9am": {
+      "count": 581012.0,
+      "mean": 212.15,
+      "std": 26.77,
+      "min": 0.0,
+      "25%": 198.0,
+      "50%": 218.0,
+      "75%": 231.0,
+      "max": 254.0
+    },
+    "Hillshade_Noon": {
+      "count": 581012.0,
+      "mean": 223.32,
+      "std": 19.77,
+      "min": 0.0,
+      "25%": 213.0,
+      "50%": 226.0,
+      "75%": 237.0,
+      "max": 254.0
+    },
+    "Hillshade_3pm": {
+      "count": 581012.0,
+      "mean": 142.53,
+      "std": 38.27,
+      "min": 0.0,
+      "25%": 119.0,
+      "50%": 143.0,
+      "75%": 168.0,
+      "max": 254.0
+    },
+    "Horizontal_Distance_To_Fire_Points": {
+      "count": 581012.0,
+      "mean": 1980.29,
+      "std": 1324.2,
+      "min": 0.0,
+      "25%": 1024.0,
+      "50%": 1710.0,
+      "75%": 2550.0,
+      "max": 7173.0
+    }
+  }
+}

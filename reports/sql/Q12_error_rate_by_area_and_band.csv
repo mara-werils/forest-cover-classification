@@ -1,0 +1,17 @@
+wilderness,band_start,n_test,error_pct,change_vs_lower_band
+Cache la Poudre,1750,275,0.73,
+Cache la Poudre,2000,2341,3.5,2.77
+Cache la Poudre,2250,4150,2.7,-0.8
+Cache la Poudre,2500,571,2.98,0.28
+Comanche Peak,2250,1303,4.07,
+Comanche Peak,2500,7976,3.89,-0.18
+Comanche Peak,2750,16215,3.02,-0.87
+Comanche Peak,3000,18503,2.5,-0.52
+Comanche Peak,3250,6461,1.75,-0.75
+Neota,3000,3125,1.73,
+Neota,3250,2713,1.62,-0.11
+Rawah,2500,6534,1.15,
+Rawah,2750,19261,3.29,2.14
+Rawah,3000,21089,2.65,-0.64
+Rawah,3250,5074,1.1,-1.55
+Rawah,3500,265,0.0,-1.1

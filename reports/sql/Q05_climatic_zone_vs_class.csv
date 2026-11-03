@@ -1,0 +1,35 @@
+climatic_zone_id,climatic_zone,cover_type,n_cells
+2,lower montane,Ponderosa Pine,21964
+2,lower montane,Lodgepole Pine,6206
+2,lower montane,Douglas-fir,4821
+2,lower montane,Cottonwood/Willow,1847
+2,lower montane,Aspen,849
+2,lower montane,Spruce/Fir,182
+2,lower montane,Krummholz,78
+3,montane dry,Lodgepole Pine,241
+3,montane dry,Spruce/Fir,43
+4,montane,Lodgepole Pine,61402
+4,montane,Ponderosa Pine,12926
+4,montane,Douglas-fir,9991
+4,montane,Spruce/Fir,6754
+4,montane,Aspen,2256
+4,montane,Cottonwood/Willow,258
+4,montane,Krummholz,6
+5,montane dry and montane,Douglas-fir,331
+5,montane dry and montane,Cottonwood/Willow,155
+5,montane dry and montane,Ponderosa Pine,116
+6,montane and subalpine,Lodgepole Pine,4359
+6,montane and subalpine,Douglas-fir,960
+6,montane and subalpine,Spruce/Fir,920
+6,montane and subalpine,Aspen,805
+6,montane and subalpine,Ponderosa Pine,635
+6,montane and subalpine,Cottonwood/Willow,487
+7,subalpine,Lodgepole Pine,209609
+7,subalpine,Spruce/Fir,181559
+7,subalpine,Aspen,5583
+7,subalpine,Krummholz,3855
+7,subalpine,Douglas-fir,1264
+7,subalpine,Ponderosa Pine,113
+8,alpine,Spruce/Fir,22382
+8,alpine,Krummholz,16571
+8,alpine,Lodgepole Pine,1484

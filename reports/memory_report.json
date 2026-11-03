@@ -1,0 +1,54 @@
+{
+  "rows": 581012,
+  "columns": 55,
+  "default_read": {
+    "memory_mb": 243.8,
+    "seconds": 0.8,
+    "dtypes": {
+      "int64": 55
+    }
+  },
+  "chunked_typed_read": {
+    "memory_mb": 33.8,
+    "seconds": 0.69,
+    "dtypes": {
+      "uint8": 49,
+      "int16": 5,
+      "uint16": 1
+    },
+    "chunksize": 100000,
+    "chunks": [
+      {
+        "chunk": 1,
+        "rows": 100000,
+        "memory_mb": 5.82
+      },
+      {
+        "chunk": 2,
+        "rows": 100000,
+        "memory_mb": 5.82
+      },
+      {
+        "chunk": 3,
+        "rows": 100000,
+        "memory_mb": 5.82
+      },
+      {
+        "chunk": 4,
+        "rows": 100000,
+        "memory_mb": 5.82
+      },
+      {
+        "chunk": 5,
+        "rows": 100000,
+        "memory_mb": 5.82
+      },
+      {
+        "chunk": 6,
+        "rows": 81012,
+        "memory_mb": 4.71
+      }
+    ]
+  },
+  "memory_reduction_pct": 86.1
+}

@@ -1,0 +1,42 @@
+band_start,band_end,cover_type,n_cells,share_in_band_pct
+1800,1999,Ponderosa Pine,740,58.8
+1800,1999,Douglas-fir,509,40.5
+1800,1999,Cottonwood/Willow,9,0.7
+2000,2199,Ponderosa Pine,5819,67.2
+2000,2199,Douglas-fir,1726,19.9
+2000,2199,Cottonwood/Willow,1071,12.4
+2000,2199,Lodgepole Pine,45,0.5
+2200,2399,Ponderosa Pine,11003,60.0
+2200,2399,Douglas-fir,5091,27.8
+2200,2399,Cottonwood/Willow,1604,8.8
+2200,2399,Lodgepole Pine,630,3.4
+2400,2599,Lodgepole Pine,14458,41.3
+2400,2599,Ponderosa Pine,12401,35.4
+2400,2599,Douglas-fir,7067,20.2
+2400,2599,Aspen,531,1.5
+2400,2599,Spruce/Fir,497,1.4
+2400,2599,Cottonwood/Willow,63,0.2
+2600,2799,Lodgepole Pine,57841,75.1
+2600,2799,Spruce/Fir,6546,8.5
+2600,2799,Ponderosa Pine,5491,7.1
+2600,2799,Aspen,4384,5.7
+2600,2799,Douglas-fir,2777,3.6
+2800,2999,Lodgepole Pine,114532,74.5
+2800,2999,Spruce/Fir,34017,22.1
+2800,2999,Aspen,4572,3.0
+2800,2999,Ponderosa Pine,300,0.2
+2800,2999,Douglas-fir,197,0.1
+2800,2999,Krummholz,84,0.1
+3000,3199,Spruce/Fir,95993,55.7
+3000,3199,Lodgepole Pine,75900,44.0
+3000,3199,Krummholz,594,0.3
+3000,3199,Aspen,6,0.0
+3200,3399,Spruce/Fir,69371,67.4
+3200,3399,Lodgepole Pine,19817,19.3
+3200,3399,Krummholz,13710,13.3
+3400,3599,Krummholz,5488,51.3
+3400,3599,Spruce/Fir,5135,48.0
+3400,3599,Lodgepole Pine,78,0.7
+3600,3799,Krummholz,478,63.0
+3600,3799,Spruce/Fir,281,37.0
+3800,3999,Krummholz,156,100.0

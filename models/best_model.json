@@ -1,0 +1,46 @@
+{
+  "model": "lightgbm",
+  "params": {
+    "num_leaves": 255,
+    "n_estimators": 500,
+    "min_child_samples": 10,
+    "learning_rate": 0.05,
+    "class_weight": "balanced"
+  },
+  "metrics": {
+    "model": "lightgbm",
+    "family": "boosting",
+    "accuracy": 0.9736,
+    "f1_macro": 0.9558,
+    "f1_weighted": 0.9737,
+    "balanced_accuracy": 0.959,
+    "predict_seconds": 46.666,
+    "predict_ms_per_1000": 401.587,
+    "f1_Spruce/Fir": 0.9728,
+    "f1_Lodgepole": 0.9772,
+    "f1_Ponderosa": 0.9741,
+    "f1_Cottonwood": 0.9036,
+    "f1_Aspen": 0.9278,
+    "f1_Douglas-fir": 0.9574,
+    "f1_Krummholz": 0.9779,
+    "train_seconds": 171.77,
+    "peak_memory_mb": 470.9,
+    "model_size_mb": 90.96,
+    "tuning_seconds": 909.5
+  },
+  "input_columns": [
+    "Elevation",
+    "Aspect",
+    "Slope",
+    "Horizontal_Distance_To_Hydrology",
+    "Vertical_Distance_To_Hydrology",
+    "Horizontal_Distance_To_Roadways",
+    "Hillshade_9am",
+    "Hillshade_Noon",
+    "Hillshade_3pm",
+    "Horizontal_Distance_To_Fire_Points",
+    "Wilderness",
+    "Soil"
+  ],
+  "trained_on_rows": 464809
+}

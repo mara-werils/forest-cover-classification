@@ -1,0 +1,7 @@
+{
+  "test_rows": 116203,
+  "errors": 3063,
+  "share_low_confidence": 0.0167,
+  "error_rate_low_confidence": 0.4521,
+  "error_rate_high_confidence": 0.0191
+}

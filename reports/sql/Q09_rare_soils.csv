@@ -1,0 +1,10 @@
+soil_id,elu_code,geologic_zone,n_cells,n_classes,class_ids
+15,5151,alluvium,3,1,6
+7,3501,mixed sedimentary,105,1,2
+36,8707,igneous and metamorphic,119,3,"7,2,1"
+8,3502,mixed sedimentary,179,2,"2,1"
+37,8708,igneous and metamorphic,298,1,7
+25,7701,igneous and metamorphic,474,2,"2,1"
+14,5101,alluvium,599,3,"4,3,6"
+21,7103,alluvium,838,3,"1,7,2"
+28,7710,igneous and metamorphic,946,3,"2,5,1"

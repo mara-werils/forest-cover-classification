@@ -1,0 +1,17 @@
+{
+  "note": "First full run of HistGradientBoosting. Configuration chosen by 3-fold CV on a 40k subsample (CV F1-macro 0.8421) diverged when refitted on the full 464,809-row train split. Kept for the report; the search space was then restricted to learning_rate<=0.1 with optional L2 regularisation.",
+  "params": {
+    "max_leaf_nodes": 63,
+    "max_iter": 300,
+    "learning_rate": 0.2,
+    "class_weight": "balanced"
+  },
+  "cv_f1_macro": 0.8421,
+  "test_metrics": {
+    "accuracy": 0.4717,
+    "f1_macro": 0.3827,
+    "balanced_accuracy": 0.6061,
+    "train_seconds": 77.14,
+    "model_size_mb": 14.21
+  }
+}

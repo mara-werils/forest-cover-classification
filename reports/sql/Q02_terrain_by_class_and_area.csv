@@ -1,0 +1,18 @@
+wilderness,cover_type,n_cells,avg_elevation,avg_slope,avg_dist_road
+Cache la Poudre,Lodgepole Pine,3026,2472.0,16.8,551.0
+Cache la Poudre,Douglas-fir,9741,2302.0,20.7,832.0
+Cache la Poudre,Ponderosa Pine,21454,2275.0,22.8,691.0
+Cache la Poudre,Cottonwood/Willow,2747,2224.0,18.5,914.0
+Comanche Peak,Krummholz,13105,3368.0,14.5,2900.0
+Comanche Peak,Spruce/Fir,87528,3113.0,13.9,2234.0
+Comanche Peak,Lodgepole Pine,125093,2927.0,15.8,1754.0
+Comanche Peak,Aspen,5712,2800.0,14.7,1560.0
+Comanche Peak,Ponderosa Pine,14300,2574.0,17.7,1324.0
+Comanche Peak,Douglas-fir,7626,2569.0,17.0,1300.0
+Neota,Krummholz,2304,3444.0,13.8,1288.0
+Neota,Spruce/Fir,18595,3236.0,13.2,1016.0
+Neota,Lodgepole Pine,8985,3214.0,12.2,921.0
+Rawah,Krummholz,5101,3310.0,13.8,2979.0
+Rawah,Spruce/Fir,105717,3123.0,12.5,3211.0
+Rawah,Lodgepole Pine,146197,2907.0,11.7,3139.0
+Rawah,Aspen,3781,2768.0,19.6,1032.0
