@@ -42,30 +42,32 @@ RELATIONS = [
 ]
 WIDTH = 3.2
 ROW = 0.36
+STYLE = {"header": "#1c5cab", "pk": "#c43d3c", "line": "#6b6a63", "text": "#2b2b29"}
 
 
 def _box(ax, name, x, y, columns):
     height = ROW * (len(columns) + 1) + 0.1
     ax.add_patch(FancyBboxPatch((x, y - height), WIDTH, height,
                                 boxstyle="round,pad=0.02,rounding_size=0.08",
-                                facecolor="white", edgecolor="#1c5cab", linewidth=1.4))
+                                facecolor="white", edgecolor=STYLE["header"], linewidth=1.4))
     ax.add_patch(FancyBboxPatch((x, y - ROW - 0.05), WIDTH, ROW + 0.05,
                                 boxstyle="round,pad=0.02,rounding_size=0.08",
-                                facecolor="#1c5cab", edgecolor="#1c5cab"))
+                                facecolor=STYLE["header"], edgecolor=STYLE["header"]))
     ax.text(x + WIDTH / 2, y - ROW / 2 - 0.02, name, ha="center", va="center", color="white",
             fontweight="bold", fontsize=9.5)
     for i, (column, key) in enumerate(columns):
         cy = y - ROW * (i + 1.5) - 0.05
-        ax.text(x + 0.12, cy, column, va="center", fontsize=8, color="#2b2b29",
+        ax.text(x + 0.12, cy, column, va="center", fontsize=8, color=STYLE["text"],
                 fontweight="bold" if "PK" in key else "normal")
         if key:
             ax.text(x + WIDTH - 0.12, cy, key, va="center", ha="right", fontsize=7,
-                    color="#c43d3c" if "PK" in key else "#6b6a63")
+                    color=STYLE["pk"] if "PK" in key else STYLE["line"])
     return (x, y - height, WIDTH, height)
 
 
-def draw(path=None):
-    """Render the diagram and return the PNG path."""
+def draw(path=None, style=None, title=True):
+    """Render the diagram and return the PNG path (style overrides colours)."""
+    STYLE.update(style or {})
     path = path or config.FIGURES_DIR / "00_er_diagram.png"
     fig, ax = plt.subplots(figsize=(15.5, 10))
     ax.set_xlim(0, 15)
@@ -86,12 +88,13 @@ def draw(path=None):
             start = (start[0], cy if py < cy else cy + ch)
             end = (end[0], py + ph if py < cy else py)
         ax.annotate("", xy=end, xytext=start,
-                    arrowprops={"arrowstyle": "-|>", "color": "#6b6a63", "lw": 1.1,
+                    arrowprops={"arrowstyle": "-|>", "color": STYLE["line"], "lw": 1.1,
                                 "connectionstyle": "arc3,rad=0.05"})
         ax.text((start[0] + end[0]) / 2, (start[1] + end[1]) / 2 + 0.12, label, fontsize=7,
-                color="#6b6a63", ha="center")
-    ax.set_title("ER diagram of covtype.db (arrows point from foreign key to referenced table)",
-                 fontweight="bold")
+                color=STYLE["line"], ha="center")
+    if title:
+            ax.set_title("ER diagram of covtype.db (arrows point from foreign key to referenced table)",
+                     fontweight="bold")
     fig.savefig(path, bbox_inches="tight", dpi=150, facecolor="white")
     plt.close(fig)
     return path
