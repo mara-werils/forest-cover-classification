@@ -12,9 +12,9 @@ strongly imbalanced problem (F1-macro, confusion matrix).
 
 | Member | Group | Main responsibility |
 |---|---|---|
-| Amanbaev Marlen | AAI-2601 | Data loading, Parquet & dtype optimisation, SQLite schema + SQL, console menu, Streamlit app |
-| Erik [surname] | [group] | Data quality audit, EDA, visualisations |
-| Rashad [surname] | [group] | Feature pipelines, model tuning & comparison, interpretation, error analysis |
+| Amanbaev Marlen | AAI-2601M | Data loading, Parquet & dtype optimisation, SQLite schema + SQL, console menu, Streamlit app |
+| Aktaev Erik | AAI-2601M | Data quality audit, EDA, visualisations |
+| Gajiyev Rashad | AAI-2601M | Feature pipelines, model tuning & comparison, interpretation, error analysis |
 
 The report and the presentation were written together; every member can explain every
 module (see the report, section "Contributions").
@@ -28,8 +28,10 @@ module (see the report, section "Contributions").
 * 581,012 rows × 55 columns: 10 numeric features, 4 one-hot wilderness areas,
   40 one-hot soil types, target `Cover_Type` (1–7).
 * The archive (11 MB zipped, 72 MB as CSV) is **downloaded automatically** by step 1 into
-  `data/raw/`; it is not stored in the repository. A stratified 1,000-row sample is
-  committed in `data/sample/` for the tests.
+  `data/raw/`; it is not stored in the repository. Committed data files:
+  `data/processed/covtype.parquet` (all 581,012 rows, compact dtypes, 7 MB) and a stratified
+  1,000-row sample `data/sample/covtype_sample_1000.csv` used by the tests. The SQLite database
+  (71 MB) is rebuilt from the Parquet file by menu option 3 in about a minute.
 
 ## Quick start
 
@@ -42,11 +44,11 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 6 fast tests on the committed sample
+python -m pytest -q         # 7 fast tests on the committed sample
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
-needed, any Python ≥ 3.10 with the listed packages should work. Works the same in
+needed, Python 3.11–3.14 with the pinned packages in `requirements.txt`. Works the same in
 VS Code / PyCharm (run `main.py`) and in Google Colab
 (`!git clone ...`, `%cd forest-cover-classification`, `!pip install -r requirements.txt`,
 `!python main.py --all`).
@@ -64,10 +66,13 @@ Thread count defaults to 4 and can be changed with `FCT_THREADS=8 python main.py
  7 - Run an SQL query
  8 - Predict cover type for your own values
  9 - Show experiment results
+10 - Robustness: ROC/PR-AUC + unseen-area validation (~25 min)
  0 - Exit
 ```
 
-Steps must be run in order the first time (1 → 6). Every step reads its input from disk,
+The processed Parquet file and the trained model are in the repository, so options 7–9
+and the Streamlit app work right after cloning (option 7 needs step 3 for the database).
+To rebuild everything from the raw data, run steps 1 → 6 in order. Every step reads its input from disk,
 so after one full run any step can be repeated on its own. A missing input file or an
 invalid value is caught (`try/except`) and reported without leaving the menu.
 
@@ -90,9 +95,11 @@ forest-cover-classification/
 │   ├── models.py         model zoo, CV tuning, memory / size measurement, joblib
 │   ├── evaluate.py       metrics, confusion matrices, permutation importance, error analysis
 │   ├── pipeline.py       steps that glue the modules together
+│   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
 ├── tests/test_pipeline.py
-├── data/sample/          1,000-row stratified sample (raw/ and processed/ are generated)
+├── data/sample/          1,000-row stratified sample
+├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
 ├── models/               best_model.json (best_model.joblib is generated)
 ├── reports/              JSON/CSV/Parquet results, sql/ query outputs, figures/
 └── docs/                 report (PDF/DOCX), presentation, ER diagram source
@@ -147,14 +154,17 @@ Stratified 80/20 split (464,809 train / 116,203 test), all preprocessing inside
 scikit-learn `Pipeline`s, hyper-parameters by `RandomizedSearchCV` (3-fold stratified CV,
 F1-macro) on a 40k-row subsample, refit on the full train split.
 
-| Model | Accuracy | **F1-macro** | Balanced acc. | Train, s | Predict, ms / 1k rows | Size, MB |
-|---|---|---|---|---|---|---|
-| Baseline (most frequent) | 0.488 | 0.094 | 0.143 | 1 | 0.4 | 0.00 |
-| Logistic Regression | 0.731 | 0.548 | 0.525 | 43 | 1 | 0.01 |
-| Random Forest | 0.972 | 0.949 | 0.939 | 62 | 10 | 568 |
-| HistGradientBoosting | 0.970 | 0.955 | 0.961 | 328 | 101 | 60 |
-| **LightGBM, balanced weights** | 0.974 | **0.956** | 0.959 | 172 | 402 | 91 |
-| LightGBM, no weights | 0.974 | 0.954 | 0.947 | 182 | 312 | 89 |
+| Model | Accuracy | **F1-macro** | Balanced acc. | ROC-AUC | PR-AUC | Train, s | Predict, ms / 1k rows | Size, MB |
+|---|---|---|---|---|---|---|---|---|
+| Baseline (most frequent) | 0.488 | 0.094 | 0.143 | 0.500 | 0.143 | 1 | 0.4 | 0.00 |
+| Logistic Regression | 0.731 | 0.548 | 0.525 | 0.938 | 0.625 | 43 | 1 | 0.01 |
+| Random Forest | 0.972 | 0.949 | 0.939 | 0.999 | 0.988 | 62 | 10 | 568 |
+| HistGradientBoosting | 0.970 | 0.955 | 0.961 | 0.999 | 0.990 | 328 | 101 | 60 |
+| **LightGBM, balanced weights** | 0.974 | **0.956** | 0.959 | 0.999 | **0.990** | 172 | 402 | 91 |
+| LightGBM, no weights | 0.974 | 0.954 | 0.947 | 0.999 | 0.990 | 182 | 312 | 89 |
+
+ROC-AUC (one-vs-rest) and PR-AUC are macro averages over the 7 classes, computed from the
+predicted probabilities (`src/robustness.py`, menu option 10).
 
 ![Model comparison](reports/figures/11_model_comparison.png)
 
@@ -175,8 +185,29 @@ F1-macro) on a 40k-row subsample, refit on the full train split.
 |---|---|
 | ![](reports/figures/10_confusion_best.png) | ![](reports/figures/15_learning_curve.png) |
 
-**Limitation.** Neighbouring 30 m cells are spatially correlated and the data have no
-coordinates, so the random split gives an optimistic estimate for a completely new region.
+### Group validation: an unseen wilderness area
+
+Neighbouring 30 m cells are spatially correlated and the data have no coordinates, so the
+random split cannot tell how the model transfers to new terrain. The wilderness area is the
+only available spatial group: `src/robustness.py` (menu option 10) trains on three areas and
+tests on the fourth.
+
+| Held-out area | LightGBM, random split | LightGBM, area held out | same, without area feature | Random Forest, held out | Baseline, held out |
+|---|---|---|---|---|---|
+| Rawah | 0.965 | 0.347 | 0.353 | 0.375 | 0.180 |
+| Neota | 0.984 | 0.315 | 0.448 | 0.290 | 0.154 |
+| Comanche Peak | 0.959 | 0.244 | 0.337 | 0.286 | 0.110 |
+| Cache la Poudre | 0.956 | 0.253 | 0.271 | 0.265 | 0.038 |
+
+(F1-macro; the random-split column is the selected model on that area's cells of the test split.)
+
+![Group validation](reports/figures/18_group_validation.png)
+
+**Limitation, measured.** The 0.956 F1-macro holds for new cells inside the four mapped areas,
+not for an unseen area (0.24–0.45). Dropping the area code recovers only part of the gap: the
+relation between terrain, soil and species itself differs between areas, and
+Cottonwood/Willow exists only in Cache la Poudre. Mapping a new area needs labelled cells
+from it.
 
 ## Deliverables
 
@@ -196,11 +227,22 @@ coordinates, so the random split gives an optimistic estimate for a completely n
 | 5 | files | CSV, Parquet, JSON, SQLite, joblib, PNG/HTML |
 | 6 | try / except | download error, missing files, invalid user input, broken history JSON |
 | 7 | UI | console menu (`main.py`) + Streamlit dashboard with filters (`app.py`) |
-| 8 | modularity | 12 modules in `src/`; `os`, `pathlib`, `json`, `datetime`, `time`, `sqlite3`, `threading` |
-| 9 | ≥ 2 approaches + baseline | Dummy vs LR vs RF vs HistGB vs LightGBM (quality, time, memory, size); CSV vs Parquet; pandas vs SQL |
+| 8 | modularity | 13 modules in `src/`; `os`, `pathlib`, `json`, `datetime`, `time`, `sqlite3`, `threading` |
+| 9 | ≥ 2 approaches + baseline | Dummy vs LR vs RF vs HistGB vs LightGBM (quality incl. ROC/PR-AUC, time, memory, size); CSV vs Parquet; pandas vs SQL; random vs group split |
 | 10 | SQLite, ER, ≥ 8 queries | `database.py`, `er_diagram.py`, 12 queries in `queries.py` loaded with `pd.read_sql_query` |
 | 11 | ≥ 500k rows, memory | 581,012 rows; `chunksize=100_000`, int16/uint8 dtypes, Parquet |
 | C7 | EDA, Pipeline/ColumnTransformer, split before fitting, CV tuning, metrics, importance, error analysis, joblib, UI prediction | `audit.py`, `eda.py`, `features.py`, `models.py`, `evaluate.py`, `predict.py` |
+
+## Extensions beyond the mandatory tasks
+
+* Group validation by wilderness area, with and without the area feature.
+* ROC-AUC and PR-AUC for every model.
+* Two gradient-boosting libraries (HistGradientBoosting, LightGBM) and a class-weight experiment.
+* Learning curve (F1-macro vs training size) that justifies using all 581k rows.
+* Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
+* Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
+* Console menu + Streamlit dashboard + Colab defense notebook; 7 tests; pinned versions.
+* A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference
 

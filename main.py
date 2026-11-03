@@ -8,7 +8,7 @@ python main.py --all    # run the whole pipeline without questions
 
 import sys
 
-from src import config, pipeline, predict, queries
+from src import config, pipeline, predict, queries, robustness
 
 MENU = {
     "1": "Prepare data (download, chunked load, dtype optimisation, Parquet)",
@@ -20,6 +20,7 @@ MENU = {
     "7": "Run an SQL query",
     "8": "Predict cover type for your own values",
     "9": "Show experiment results",
+    "10": "Robustness: ROC/PR-AUC + unseen-area validation (~25 min)",
     "0": "Exit",
 }
 
@@ -85,6 +86,8 @@ def show_results():
     results = pd.read_parquet(config.RESULTS_PARQUET)
     columns = ["model", "accuracy", "f1_macro", "balanced_accuracy", "train_seconds",
                "predict_ms_per_1000", "model_size_mb"]
+    # ROC-AUC / PR-AUC appear after menu option 10 has been run.
+    columns += [c for c in ("roc_auc_ovr_macro", "pr_auc_macro") if c in results.columns]
     print(results[columns].sort_values("f1_macro", ascending=False).to_string(index=False))
 
 
@@ -98,6 +101,7 @@ ACTIONS = {
     "7": sql_menu,
     "8": prediction_menu,
     "9": show_results,
+    "10": robustness.run_robustness,
 }
 
 

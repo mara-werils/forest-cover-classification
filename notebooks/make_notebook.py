@@ -25,8 +25,8 @@ md(f"""
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mara-werils/forest-cover-classification/blob/main/notebooks/Forest_Cover_Defense.ipynb)
 
-Topic 37, Programming for AI. Team: **Amanbaev Marlen (AAI-2601)**, **Erik [surname] ([group])**,
-**Rashad [surname] ([group])**.
+Topic 37, Programming for AI. Team: **Amanbaev Marlen (AAI-2601M)**, **Aktaev Erik (AAI-2601M)**,
+**Gajiyev Rashad (AAI-2601M)**.
 
 This notebook walks through the project in the order of the pipeline. It does not contain
 its own logic: each cell calls functions from `src/`, the same ones used by the console menu
@@ -40,7 +40,8 @@ its own logic: each cell calls functions from `src/`, the same ones used by the 
 | 4. SQLite + SQL | `src/database.py`, `src/queries.py` |
 | 5. Models: comparison | `src/features.py`, `src/models.py`, `src/pipeline.py` |
 | 6. Evaluation, importance, errors | `src/evaluate.py` |
-| 7. Prediction for user input | `src/predict.py` |
+| 7. Robustness: ROC/PR-AUC, unseen-area validation | `src/robustness.py` |
+| 8. Prediction for user input | `src/predict.py` |
 
 Repository: {REPO}
 """)
@@ -246,7 +247,26 @@ for key in ["Q11_top_confusions", "Q12_error_rate_by_area_and_band"]:
     display(queries.run_query(key)[0].head(12))
 """)
 
-md("## 7. Prediction for user input")
+md("""
+## 7. Robustness: threshold-free metrics and an unseen wilderness area
+
+* **ROC-AUC / PR-AUC** (macro, one-vs-rest) complement F1-macro: they do not depend on the
+  0.5 threshold, and PR-AUC is sensitive to the rare classes.
+* **Group validation.** The random split puts neighbouring 30 m cells into both train and test.
+  The data has no coordinates, so the wilderness area is used as the group: train on three
+  areas, test on the fourth (`src/robustness.py`, menu option 10, about 25 min). Results were
+  saved by that run and are loaded here.
+""")
+
+code("""
+from src import robustness
+display(pd.read_csv(robustness.PROB_CSV))
+group = pd.read_csv(robustness.GROUP_CSV)
+display(group.pivot(index="held_out_area", columns="model", values="f1_macro").round(3))
+display(Image(filename=str(FIG / "18_group_validation.png"), width=900))
+""")
+
+md("## 8. Prediction for user input")
 
 code("""
 record = dict(predict.EXAMPLE_RECORD)

@@ -60,3 +60,11 @@ def test_database_and_descriptive_queries(sample, tmp_path):
         assert isinstance(frame, pd.DataFrame)
     shares = database.read_sql(QUERIES["Q01_class_distribution"]["sql"], db_path=db_path)
     assert abs(shares["share_pct"].sum() - 100) < 0.1
+
+
+def test_area_scores_flag_unseen_classes():
+    from src.robustness import _area_scores
+
+    scores = _area_scores([1, 1, 4, 4], [1, 1, 1, 1], seen={1, 2})
+    assert scores["classes_unseen_in_train"] == [4]
+    assert scores["accuracy"] == 0.5

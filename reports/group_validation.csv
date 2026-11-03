@@ -1,0 +1,21 @@
+held_out_area,model,train_rows,test_rows,accuracy,f1_macro,balanced_accuracy,classes_in_area,classes_unseen_in_train,seconds
+Rawah,baseline_dummy,320216,260796,0.5606,0.1796,0.25,4,[],0.1
+Rawah,random_forest,320216,260796,0.5832,0.3753,0.3907,4,[],35.4
+Rawah,lightgbm,320216,260796,0.5233,0.3467,0.376,4,[],157.7
+Neota,baseline_dummy,551128,29884,0.3007,0.1541,0.3333,3,[],0.0
+Neota,random_forest,551128,29884,0.5466,0.2903,0.3158,3,[],63.8
+Neota,lightgbm,551128,29884,0.5404,0.3147,0.3274,3,[],161.8
+Comanche Peak,baseline_dummy,327648,253364,0.4937,0.1102,0.1667,6,[],0.1
+Comanche Peak,random_forest,327648,253364,0.585,0.2858,0.2727,6,[],39.4
+Comanche Peak,lightgbm,327648,253364,0.5665,0.2436,0.2464,6,[],147.6
+Cache la Poudre,baseline_dummy,544044,36968,0.0819,0.0378,0.25,4,[4],0.0
+Cache la Poudre,random_forest,544044,36968,0.428,0.2648,0.279,4,[4],62.9
+Cache la Poudre,lightgbm,544044,36968,0.4218,0.2529,0.2657,4,[4],143.5
+Rawah,lightgbm_no_area,320216,260796,0.528,0.353,0.3958,4,[],159.9
+Neota,lightgbm_no_area,551128,29884,0.5565,0.4483,0.4606,3,[],156.5
+Comanche Peak,lightgbm_no_area,327648,253364,0.5877,0.3366,0.3078,6,[],142.8
+Cache la Poudre,lightgbm_no_area,544044,36968,0.418,0.2706,0.2929,4,[4],134.6
+Rawah,lightgbm (random split),464809,52275,0.9747,0.9653,0.9703,4,[],0.0
+Neota,lightgbm (random split),464809,6014,0.9835,0.9841,0.9854,3,[],0.0
+Comanche Peak,lightgbm (random split),464809,50577,0.9718,0.9589,0.9649,6,[],0.0
+Cache la Poudre,lightgbm (random split),464809,7337,0.971,0.9557,0.953,4,[],0.0

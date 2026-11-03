@@ -10,7 +10,8 @@ from contextlib import closing
 
 import pandas as pd
 
-from src import audit, config, data_loader, database, eda, evaluate, features, models, queries
+from src import (audit, config, data_loader, database, eda, evaluate, features, models, queries,
+                 robustness)
 
 MODEL_ORDER = ["baseline_dummy", "logreg", "random_forest", "hist_gb", "lightgbm"]
 
@@ -239,4 +240,5 @@ def run_all():
     step_train(df)
     step_interpret(df)
     step_sql_report()
+    robustness.run_robustness(df)
     print(f"\nPipeline finished in {(time.perf_counter() - start) / 60:.1f} min")

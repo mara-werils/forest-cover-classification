@@ -1,6 +1,8 @@
-# Data is downloaded by the code (see README); only the 1,000-row sample is versioned.
+# The raw CSV is downloaded by the code (see README). Versioned: the 1,000-row sample
+# and the 7 MB Parquet file, so the app and prediction work right after cloning.
 data/raw/
-data/processed/
+data/processed/*
+!data/processed/covtype.parquet
 # Only the selected model is versioned (40 MB) so prediction works right after cloning.
 models/*.joblib
 !models/best_model.joblib
@@ -8,6 +10,7 @@ models/*.joblib
 reports/prediction_history.json
 reports/full_run.log
 reports/histgb_rerun.log
+reports/robustness_run.log
 __pycache__/
 *.pyc
 .pytest_cache/
@@ -15,3 +18,4 @@ __pycache__/
 .venv/
 venv/
 .ipynb_checkpoints/
+~$*

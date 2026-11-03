@@ -1,0 +1,7 @@
+model,roc_auc_ovr_macro,pr_auc_macro
+baseline_dummy,0.5,0.1429
+logreg,0.9383,0.6252
+random_forest,0.9992,0.9881
+hist_gb,0.9989,0.9897
+lightgbm,0.9991,0.9903
+lightgbm_unweighted,0.9991,0.9896

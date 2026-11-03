@@ -41,6 +41,11 @@ def score(model, X_test, y_test):
     }
     for label, value in zip(LABELS, per_class):
         metrics[f"f1_{SHORT[label]}"] = round(float(value), 4)
+    if hasattr(model, "predict_proba"):
+        # Threshold-free metrics: macro one-vs-rest ROC-AUC and PR-AUC.
+        from src.robustness import probability_metrics
+
+        metrics.update(probability_metrics(model, X_test, y_test))
     return metrics, predictions
 
 
