@@ -122,11 +122,26 @@ def step_train(df=None, model_names=None, tuning_sample=config.TUNING_SAMPLE):
             _record(connection, variant, "boosting", params, metrics, X_test.index, predictions)
 
     results = pd.DataFrame(rows)
+    # Re-running a subset of models keeps the rows of the other models.
+    if set(model_names) != set(MODEL_ORDER) and config.RESULTS_PARQUET.exists():
+        previous = pd.read_parquet(config.RESULTS_PARQUET)
+        previous = previous[~previous["model"].isin(results["model"])]
+        results = pd.concat([previous, results], ignore_index=True)
+        order = MODEL_ORDER + ["lightgbm_balanced", "lightgbm_unweighted"]
+        results = results.sort_values("model", key=lambda s: s.map(order.index)).reset_index(
+            drop=True)
+        if config.TUNING_JSON.exists():
+            tuning_log = {**json.loads(config.TUNING_JSON.read_text()), **tuning_log}
     results.to_parquet(config.RESULTS_PARQUET, index=False)
     results.to_csv(config.RESULTS_CSV, index=False)
     config.TUNING_JSON.write_text(json.dumps(tuning_log, indent=2, default=str))
 
     best_name = results.loc[results["f1_macro"].idxmax(), "model"]
+    evaluate.plot_model_comparison(results)
+    evaluate.plot_per_class_f1(results)
+    if best_name not in fitted:
+        print(f"\nBest model is still {best_name} (saved earlier); comparison plots updated.")
+        return results
     best_pipeline, best_predictions, best_params = fitted[best_name]
     models.save_model(best_pipeline, {
         "model": best_name,
@@ -136,8 +151,6 @@ def step_train(df=None, model_names=None, tuning_sample=config.TUNING_SAMPLE):
         "trained_on_rows": len(X_train),
     })
 
-    evaluate.plot_model_comparison(results)
-    evaluate.plot_per_class_f1(results)
     evaluate.plot_confusion(y_test, best_predictions,
                             f"Confusion matrix: {best_name} (test, row %)",
                             "10_confusion_best.png")

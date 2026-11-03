@@ -88,7 +88,7 @@ def plot_model_comparison(results):
         ("f1_macro", "F1-macro (test)", "{:.3f}"),
         ("accuracy", "Accuracy (test)", "{:.3f}"),
         ("train_seconds", "Training time, s (full train split)", "{:.1f}"),
-        ("model_size_mb", "Model size, MB (pickled)", "{:.1f}"),
+        ("model_size_mb", "Model size, MB (pickled)", "{:.2f}"),
     ]
     for ax, (column, title, fmt) in zip(axes, panels):
         colors = ["#1c5cab" if m == results.loc[results["f1_macro"].idxmax(), "model"]

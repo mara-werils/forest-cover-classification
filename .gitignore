@@ -1,11 +1,13 @@
 # Data is downloaded by the code (see README); only the 1,000-row sample is versioned.
 data/raw/
 data/processed/
-# Models are re-created by `python main.py --all` (best model is ~tens of MB).
+# Only the selected model is versioned (40 MB) so prediction works right after cloning.
 models/*.joblib
+!models/best_model.joblib
 # Local artefacts
 reports/prediction_history.json
 reports/full_run.log
+reports/histgb_rerun.log
 __pycache__/
 *.pyc
 .pytest_cache/

@@ -66,7 +66,7 @@ def tab_overview(view, total):
                  color_discrete_map=COLOR_MAP, category_orders={"Cover type": CLASS_ORDER},
                  title="Class distribution in the selection")
     fig.update_layout(showlegend=False, template="plotly_white")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def tab_explore(view):
@@ -79,7 +79,7 @@ def tab_explore(view):
                  category_orders={"Cover type": CLASS_ORDER},
                  title=f"{feature} by cover type (up to 50k sampled cells)")
     fig.update_layout(showlegend=False, template="plotly_white")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     sample = view.sample(min(len(view), 15_000), random_state=0)
     x_axis = st.selectbox("Scatter X axis", config.NUMERIC_COLS, index=5)
@@ -89,7 +89,7 @@ def tab_explore(view):
                      title=f"Elevation vs {x_axis} ({len(sample):,} sampled cells)")
     fig.update_traces(marker={"size": 4})
     fig.update_layout(template="plotly_white")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def tab_sql():
@@ -101,7 +101,7 @@ def tab_sql():
     st.code(queries.QUERIES[key]["sql"].strip(), language="sql")
     try:
         frame, seconds = queries.run_query(key, save=False)
-        st.dataframe(frame, use_container_width=True)
+        st.dataframe(frame, width="stretch")
         st.caption(f"{len(frame)} rows in {seconds:.3f} s")
     except FileNotFoundError as error:
         st.error(str(error))
@@ -115,13 +115,13 @@ def tab_models():
     show = ["model", "accuracy", "f1_macro", "balanced_accuracy", "train_seconds",
             "predict_ms_per_1000", "model_size_mb", "peak_memory_mb"]
     st.dataframe(results[show].sort_values("f1_macro", ascending=False),
-                 use_container_width=True, hide_index=True)
+                 width="stretch", hide_index=True)
     for name in ("11_model_comparison.png", "12_per_class_f1.png", "10_confusion_best.png",
                  "13_permutation_importance.png", "14_error_by_elevation.png",
                  "15_learning_curve.png"):
         path = config.FIGURES_DIR / name
         if path.exists():
-            st.image(str(path), use_container_width=True)
+            st.image(str(path), width="stretch")
 
 
 def tab_predict():

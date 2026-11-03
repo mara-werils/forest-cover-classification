@@ -76,9 +76,13 @@ def model_specs():
                                       len(features.NUMERIC_MODEL_COLS) + 1],
             ),
             "space": {
-                "model__learning_rate": [0.1, 0.2],
+                # lr 0.2 + balanced weights scored well in CV on 40k rows but
+                # diverged on the full train split (F1-macro 0.38), so the
+                # step size is capped at 0.1 and L2 regularisation is added.
+                "model__learning_rate": [0.05, 0.1],
                 "model__max_iter": [300, 500],
                 "model__max_leaf_nodes": [63, 127, 255],
+                "model__l2_regularization": [0.0, 1.0],
                 "model__class_weight": [None, "balanced"],
             },
             "n_iter": 5,
