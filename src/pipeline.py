@@ -49,7 +49,8 @@ def step_eda(df=None):
     df = df if df is not None else data_loader.load_parquet()
     report = json.loads(config.AUDIT_JSON.read_text()) if config.AUDIT_JSON.exists() else None
     outputs = eda.run_eda(df, report)
-    print(f"Saved {len(outputs) - 1} figures to {config.FIGURES_DIR}")
+    figures = [path for path in outputs.values() if hasattr(path, "suffix")]
+    print(f"Saved {len(figures)} figures to {config.FIGURES_DIR}")
     print("Strongest correlations:", outputs["top_correlations"])
     return outputs
 

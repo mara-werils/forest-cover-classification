@@ -62,6 +62,7 @@ def tmp_reports(tmp_path, monkeypatch):
     figures.mkdir(parents=True)
     monkeypatch.setattr(config, "REPORTS_DIR", reports)
     monkeypatch.setattr(config, "FIGURES_DIR", figures)
-    monkeypatch.setattr(config, "AUDIT_JSON", reports / "data_audit.json")
+    for name in ("AUDIT_JSON", "MEMORY_JSON", "FORMAT_BENCH_JSON"):
+        monkeypatch.setattr(config, name, reports / getattr(config, name).name)
     monkeypatch.setattr(config, "HISTORY_JSON", reports / "prediction_history.json")
     return reports

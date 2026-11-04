@@ -249,6 +249,88 @@ def interactive_scatter(df, n=30_000):
     return path
 
 
+def plot_aspect_rose(df, bins=16):
+    """Polar histogram of Aspect for every cover type (share of the class).
+
+    Aspect is a compass direction, so a linear histogram would put 359 deg
+    and 1 deg at opposite ends; the rose shows which slopes each class
+    prefers and is the visual reason for the sin/cos encoding in features.py.
+    """
+    edges = np.linspace(0, 360, bins + 1)
+    centers = np.deg2rad((edges[:-1] + edges[1:]) / 2)
+    width = 2 * np.pi / bins
+    aspect = df["Aspect"].to_numpy() % 360
+    target = df[config.TARGET].to_numpy()
+    fig, axes = plt.subplots(2, 4, figsize=(15, 7.6), subplot_kw={"projection": "polar"})
+    overall = np.histogram(aspect, edges)[0] / len(aspect)
+    for ax, class_id in zip(axes.ravel(), sorted(config.COVER_TYPES)):
+        values = aspect[target == class_id]
+        shares = np.histogram(values, edges)[0] / max(len(values), 1)
+        ax.bar(centers, shares, width=width * 0.92, color=CLASS_COLORS[class_id], alpha=0.9)
+        ax.plot(np.append(centers, centers[0]), np.append(overall, overall[0]),
+                color=TEXT, linewidth=0.8, linestyle="--")
+        ax.set_theta_zero_location("N")
+        ax.set_theta_direction(-1)
+        ax.set_xticks(np.deg2rad([0, 90, 180, 270]), ["N", "E", "S", "W"], fontsize=8)
+        ax.set_yticklabels([])
+        ax.set_title(f"{config.COVER_TYPES[class_id]} (n={len(values):,})", fontsize=9, pad=12)
+    legend_ax = axes.ravel()[-1]
+    legend_ax.set_axis_off()
+    legend_ax.text(0.5, 0.5, "bars: share of the class\nfacing each direction\n\n"
+                   "dashed: all cells", transform=legend_ax.transAxes, ha="center",
+                   va="center", fontsize=9, color=MUTED)
+    fig.suptitle("Which way do the slopes face? Aspect rose per cover type (22.5 deg bins)",
+                 fontweight="bold")
+    fig.tight_layout()
+    return _save(fig, "21_aspect_rose.png")
+
+
+def plot_hillshade_shadows(df, n=40_000):
+    """Are the 1,338 zeros of Hillshade_3pm missing values or real shadows?
+
+    Left: aspect/slope of the zero rows over a random background sample.
+    Right: Hillshade_9am vs Hillshade_3pm density with the zero rows on top.
+    """
+    zero = df["Hillshade_3pm"] == 0
+    zeros = df[zero]
+    background = df[~zero].sample(min(n, int((~zero).sum())), random_state=config.RANDOM_STATE)
+    east_steep = zeros["Aspect"].between(45, 135) & (zeros["Slope"] >= 20)
+
+    fig = plt.figure(figsize=(14, 5.6))
+    ax = fig.add_subplot(1, 2, 1, projection="polar")
+    ax.scatter(np.deg2rad(background["Aspect"]), background["Slope"], s=1, color=GRID,
+               alpha=0.6, label="other cells (sample)")
+    ax.scatter(np.deg2rad(zeros["Aspect"]), zeros["Slope"], s=4, color="#eb6834", alpha=0.7,
+               label="Hillshade_3pm = 0")
+    ax.set_theta_zero_location("N")
+    ax.set_theta_direction(-1)
+    ax.set_xticks(np.deg2rad([0, 90, 180, 270]), ["N", "E", "S", "W"])
+    ax.set_rlabel_position(200)
+    ax.set_title("Direction (angle) and slope in degrees (radius)", fontsize=10, pad=14)
+    ax.legend(loc="lower left", bbox_to_anchor=(-0.15, -0.12), fontsize=8, markerscale=4)
+
+    ax = fig.add_subplot(1, 2, 2)
+    image = ax.hexbin(df["Hillshade_9am"], df["Hillshade_3pm"], gridsize=60, cmap=BLUE_RAMP,
+                      bins="log", mincnt=1)
+    ax.scatter(zeros["Hillshade_9am"], zeros["Hillshade_3pm"], s=6, color="#eb6834",
+               alpha=0.6)
+    ax.set_xlabel("Hillshade 9am (0-255)")
+    ax.set_ylabel("Hillshade 3pm (0-255)")
+    ax.set_title("Morning vs afternoon light: zeros continue the bright-morning tail",
+                 fontsize=10)
+    fig.colorbar(image, ax=ax, label="cells per hexagon (log)")
+    fig.suptitle(f"Hillshade_3pm = 0 on {zero.sum():,} cells: {east_steep.mean():.0%} face east "
+                 "(45-135 deg) on slopes >= 20 deg -> afternoon self-shadow, not missing data",
+                 fontweight="bold", fontsize=11)
+    fig.tight_layout()
+    return _save(fig, "22_hillshade_shadows.png"), {
+        "hillshade_3pm_zero": int(zero.sum()),
+        "east_facing_steep_share": round(float(east_steep.mean()), 4),
+        "median_slope_zero": float(zeros["Slope"].median()),
+        "median_slope_other": float(df.loc[~zero, "Slope"].median()),
+    }
+
+
 def run_eda(df, audit_report=None):
     """Produce every figure; returns a dict name -> path and key numbers."""
     config.ensure_dirs()
@@ -269,9 +351,12 @@ def run_eda(df, audit_report=None):
         "Cover-type mix per soil type (% of row, soils with >= 500 cells)", min_count=500)
     outputs["formats"] = plot_memory_and_formats()
     outputs["interactive"] = interactive_scatter(df)
+    outputs["aspect_rose"] = plot_aspect_rose(df)
+    outputs["hillshade_shadows"], shadows = plot_hillshade_shadows(df)
 
     # Strongest correlations, for the report.
     pairs = corr.where(np.triu(np.ones(corr.shape, dtype=bool), k=1)).stack()
     top = pairs.reindex(pairs.abs().sort_values(ascending=False).index).head(5)
     outputs["top_correlations"] = {f"{a} ~ {b}": round(float(v), 3) for (a, b), v in top.items()}
+    outputs["hillshade_zero_check"] = shadows
     return outputs
