@@ -1,7 +1,7 @@
 # Shortcuts for the common tasks. Uses the active Python (or .venv if present).
 PYTHON ?= $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 
-.PHONY: help install test test-fast lint format app menu stats all clean
+.PHONY: help install test test-fast lint format app menu stats docs all clean
 
 help:
 	@echo "make install    install the pinned requirements"
@@ -12,6 +12,7 @@ help:
 	@echo "make app        start the Streamlit dashboard"
 	@echo "make menu       start the console menu"
 	@echo "make stats      feature relevance + shift between wilderness areas"
+	@echo "make docs       regenerate docs/DATA_DICTIONARY.md from config + data"
 	@echo "make all        full pipeline (python main.py --all, 30-60 min)"
 	@echo "make clean      remove caches"
 
@@ -38,6 +39,9 @@ menu:
 
 stats:
 	$(PYTHON) -c "from src import pipeline; pipeline.step_stats()"
+
+docs:
+	$(PYTHON) -m src.data_dictionary
 
 all:
 	$(PYTHON) main.py --all
