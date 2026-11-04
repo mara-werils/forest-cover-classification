@@ -1,4 +1,4 @@
-"""Streamlit dashboard: filters, interactive EDA, SQL, model results, prediction.
+"""Streamlit dashboard: filters, interactive EDA, data quality, SQL, models, prediction.
 
 Run with:  streamlit run app.py
 """
@@ -92,6 +92,72 @@ def tab_explore(view):
     st.plotly_chart(fig, width="stretch")
 
 
+def _read_json(path):
+    try:
+        return json.loads(path.read_text())
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
+
+
+def tab_quality():
+    """Audit, model-free feature relevance and shift between areas (whole data set)."""
+    report = _read_json(config.AUDIT_JSON)
+    if report is None:
+        st.info("Run the data quality audit first: python main.py, option 2.")
+        return
+    duplicates = report["duplicates"]
+    integrity = report["one_hot_integrity"]
+    cols = st.columns(4)
+    cols[0].metric("Rows audited", f"{report['shape']['rows']:,}")
+    cols[1].metric("Missing values", sum(report["missing_values"].values()))
+    cols[2].metric("Duplicate rows", f"{duplicates['exact_duplicate_rows']:,}")
+    cols[3].metric("Broken one-hot rows",
+                   sum(v["rows_with_none"] + v["rows_with_several"] for v in integrity.values()))
+    st.caption("The audit runs on all rows and ignores the sidebar filters.")
+
+    st.subheader("Outliers: global IQR fences vs fences inside each cover type")
+    rows = []
+    for col, info in report["iqr_outliers"].items():
+        row = {"feature": col, "global IQR outliers": info["outliers"],
+               "global %": info["outliers_pct"]}
+        by_class = report.get("iqr_outliers_by_class", {}).get(col)
+        if by_class:
+            row["within-class outliers"] = by_class["within_class_outliers"]
+            row["explained by class"] = by_class["explained_by_class"]
+        rows.append(row)
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+    st.caption("A global outlier that is normal inside its own cover type is an altitude belt, "
+               "not an error; only within-class outliers are candidates for bad values.")
+
+    relevance = _read_json(config.REPORTS_DIR / "feature_relevance.json")
+    shift = _read_json(config.REPORTS_DIR / "area_shift.json")
+    if relevance is None or shift is None:
+        st.info("Feature relevance and area shift appear after menu option 11.")
+    else:
+        st.subheader("How much does each feature say about the cover type on its own?")
+        table = pd.DataFrame(relevance["table"])
+        table["% of class entropy"] = (100 * table["mi_share_of_class_entropy"]).round(1)
+        st.dataframe(table[["feature", "test", "effect_measure", "effect_size",
+                            "mutual_info_bits", "% of class entropy"]].round(3),
+                     hide_index=True, width="stretch")
+        comparison = relevance.get("vs_permutation_importance")
+        if comparison:
+            st.caption(f"Spearman rank correlation with the model's permutation importance: "
+                       f"{comparison['spearman_rho']} over {comparison['features']} features.")
+
+        st.subheader("Shift between wilderness areas")
+        areas = pd.DataFrame(shift["areas"])
+        areas["classes_only_in_this_area"] = areas["classes_only_in_this_area"].str.join(", ")
+        st.dataframe(areas.drop(columns=["classes_missing_here"]), hide_index=True,
+                     width="stretch")
+
+    for name in ("19_feature_relevance.png", "20_area_shift.png", "21_aspect_rose.png",
+                 "22_hillshade_shadows.png"):
+        path = config.FIGURES_DIR / name
+        if path.exists():
+            st.image(str(path), width="stretch")
+
+
 def tab_sql():
     items = queries.list_queries()
     labels = [f"{key}: {title}" for key, title, _ in items]
@@ -165,16 +231,18 @@ def main():
         st.error(str(error))
         st.stop()
     view = sidebar_filters(df)
-    tabs = st.tabs(["Overview", "Explore", "SQL", "Models", "Predict"])
+    tabs = st.tabs(["Overview", "Explore", "Data quality", "SQL", "Models", "Predict"])
     with tabs[0]:
         tab_overview(view, len(df))
     with tabs[1]:
         tab_explore(view)
     with tabs[2]:
-        tab_sql()
+        tab_quality()
     with tabs[3]:
-        tab_models()
+        tab_sql()
     with tabs[4]:
+        tab_models()
+    with tabs[5]:
         tab_predict()
 
 
