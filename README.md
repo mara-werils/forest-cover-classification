@@ -1,5 +1,7 @@
 # Forest Cover Type Classification
 
+[![tests](https://github.com/mara-werils/forest-cover-classification/actions/workflows/tests.yml/badge.svg)](https://github.com/mara-werils/forest-cover-classification/actions/workflows/tests.yml)
+
 Final project for **Programming for AI** (Applied Artificial Intelligence, MSc), topic 37,
 cluster 7 "Machine Learning on Tabular Data".
 
@@ -13,7 +15,7 @@ strongly imbalanced problem (F1-macro, confusion matrix).
 | Member | Group | Main responsibility |
 |---|---|---|
 | Amanbaev Marlen | AAI-2601M | Data loading, Parquet & dtype optimisation, SQLite schema + SQL, console menu, Streamlit app |
-| Aktaev Erik | AAI-2601M | Data quality audit, EDA, visualisations |
+| Aktaev Erik | AAI-2601M | Data quality audit, EDA, visualisations, feature relevance and area-shift statistics, tests and CI |
 | Gajiyev Rashad | AAI-2601M | Feature pipelines, model tuning & comparison, interpretation, error analysis |
 
 The report and the presentation were written together; every member can explain every
@@ -44,7 +46,7 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 7 fast tests on the committed sample
+python -m pytest -q         # 128 tests, ~5 s (sample + a few checks on the full Parquet)
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
@@ -53,6 +55,10 @@ VS Code / PyCharm (run `main.py`) and in Google Colab
 (`!git clone ...`, `%cd forest-cover-classification`, `!pip install -r requirements.txt`,
 `!python main.py --all`).
 Thread count defaults to 4 and can be changed with `FCT_THREADS=8 python main.py --all`.
+On macOS LightGBM needs the OpenMP runtime: `brew install libomp`.
+
+`make help` lists shortcuts for the same commands (`make test`, `make lint`, `make app`,
+`make stats`, `make docs`, `make all`).
 
 ### Console menu
 
@@ -67,6 +73,7 @@ Thread count defaults to 4 and can be changed with `FCT_THREADS=8 python main.py
  8 - Predict cover type for your own values
  9 - Show experiment results
 10 - Robustness: ROC/PR-AUC + unseen-area validation (~25 min)
+11 - Statistics: feature relevance + shift between wilderness areas
  0 - Exit
 ```
 
@@ -81,13 +88,20 @@ invalid value is caught (`try/except`) and reported without leaving the menu.
 ```
 forest-cover-classification/
 ├── main.py               console menu, `--all` for the full pipeline
-├── app.py                Streamlit dashboard (filters, EDA, SQL, models, prediction)
-├── requirements.txt
+├── app.py                Streamlit dashboard (filters, EDA, data quality, SQL, models, prediction)
+├── requirements.txt      pinned versions (requirements-dev.txt adds ruff)
+├── pyproject.toml        ruff + pytest configuration
+├── Makefile              shortcuts: test, lint, app, stats, docs, all
+├── .github/workflows/    CI: ruff + tests on Python 3.11-3.14
 ├── src/
 │   ├── config.py         paths, column names, lookup tables, seeds
 │   ├── data_loader.py    download, chunked typed read, memory report, Parquet, CSV vs Parquet
 │   ├── audit.py          missing values, duplicates, one-hot integrity, ranges, IQR outliers
-│   ├── eda.py            all EDA figures (+ interactive Plotly scatter)
+│   │                     (global and inside each cover type)
+│   ├── eda.py            all EDA figures (+ interactive Plotly scatter, aspect rose, shadows)
+│   ├── relevance.py      model-free feature relevance: Kruskal-Wallis, Cramér's V, mutual info
+│   ├── shift.py          covariate / label shift between wilderness areas (PSI, KS, TVD)
+│   ├── data_dictionary.py  generates docs/DATA_DICTIONARY.md from config + data
 │   ├── database.py       SQLite schema, loading in chunks, experiment / prediction tables
 │   ├── queries.py        12 analytical SQL queries, pandas vs SQL check
 │   ├── er_diagram.py     ER diagram (PNG) + Mermaid source
@@ -97,12 +111,13 @@ forest-cover-classification/
 │   ├── pipeline.py       steps that glue the modules together
 │   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
-├── tests/test_pipeline.py
+├── tests/                128 tests: audit, features, predict, database/SQL, EDA, statistics,
+│                         menu, dashboard (headless), data dictionary drift
 ├── data/sample/          1,000-row stratified sample
 ├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
 ├── models/               best_model.json (best_model.joblib is generated)
 ├── reports/              JSON/CSV/Parquet results, sql/ query outputs, figures/
-└── docs/                 report (PDF/DOCX), presentation, ER diagram source
+└── docs/                 report (PDF/DOCX), presentation, ER diagram source, data dictionary
 ```
 
 ## Database
@@ -146,7 +161,60 @@ GROUP BY/HAVING, correlated and FROM-subqueries, CTEs, and the window functions
 
 Audit: no missing values, no duplicates, no invalid one-hot rows, no out-of-range values.
 IQR outliers (≤ 5.4% per column) are real terrain extremes and were kept
-(`reports/data_audit.json`).
+(`reports/data_audit.json`). Column-by-column reference: [`docs/DATA_DICTIONARY.md`](docs/DATA_DICTIONARY.md).
+
+## Data quality and statistics before modelling
+
+**Outliers are mostly altitude belts.** Global Tukey fences mix seven cover types that live
+at different elevations. Applied inside each class instead, 14,495 of the 15,569 elevation
+outliers (93%) turn out to be ordinary cells of their own cover type (`iqr_outliers_by_class`
+in the audit report), which is why clipping them would remove signal, not noise.
+
+**`Hillshade_3pm = 0` is shadow, not missing data.** 92% of the 1,338 zero cells face east
+(45–135°) on slopes ≥ 20° (median 36° vs 13° elsewhere) and continue the bright-morning tail
+of the 9am/3pm density, so the values were kept instead of imputed.
+
+| Aspect rose per cover type | Hillshade zeros |
+|---|---|
+| ![](reports/figures/21_aspect_rose.png) | ![](reports/figures/22_hillshade_shadows.png) |
+
+**Feature relevance without a model** (`src/relevance.py`, menu option 11): mutual
+information with the class as a share of the class entropy (1.74 bits), plus an effect size
+per feature (ε² from Kruskal–Wallis for numbers, bias-corrected Cramér's V for categories).
+
+| Feature | Alone: MI, % of class entropy | Effect size | In the model: permutation importance rank |
+|---|---|---|---|
+| Elevation | 37.7% | ε² 0.51 | 1 |
+| Soil | 33.5% | V 0.47 | 5 |
+| Wilderness | 15.6% | V 0.44 | 4 |
+| Distance to roads | 7.5% | ε² 0.12 | 2 |
+| Distance to fire points | 6.0% | ε² 0.10 | 3 |
+| Slope, aspect, hillshade | ≤ 3.1% | ε² ≤ 0.06 | 8–12 |
+
+The two rankings agree overall (Spearman ρ = 0.66), with two telling exceptions: Soil is
+strong alone but largely repeats elevation (soil type explains 58% of the rank variance of
+elevation, ε² = 0.58, since its ELU code encodes the climatic zone), while the distances to
+roads and fire points are weak alone and become the 2nd and 3rd most important inputs
+through interactions.
+
+![Feature relevance](reports/figures/19_feature_relevance.png)
+
+**Why an unseen area is hard** (`src/shift.py`): every area compared with the other three.
+
+| Area | Cells | Mean PSI, numeric | Major shifts (PSI > 0.25) | Soil TVD | Label TVD | Held-out F1-macro |
+|---|---|---|---|---|---|---|
+| Rawah | 260,796 | 0.34 | 3 / 10 | 0.78 | 0.21 | 0.35 |
+| Neota | 29,884 | 0.75 | 2 / 10 | 0.56 | 0.32 | 0.31 |
+| Comanche Peak | 253,364 | 0.31 | 2 / 10 | 0.70 | 0.05 | 0.24 |
+| Cache la Poudre | 36,968 | 2.01 | 9 / 10 | 0.91 | 0.88 | 0.25 |
+
+Soil distributions are 56–91% disjoint between areas, Cache la Poudre differs on almost
+every feature and is the only home of Cottonwood/Willow, and Comanche Peak scores lowest
+despite almost no label shift: the relation between terrain, soil and species itself
+changes from area to area, which is the data-side explanation of the group validation
+result below.
+
+![Area shift](reports/figures/20_area_shift.png)
 
 ## Model results
 
@@ -227,7 +295,7 @@ from it.
 | 5 | files | CSV, Parquet, JSON, SQLite, joblib, PNG/HTML |
 | 6 | try / except | download error, missing files, invalid user input, broken history JSON |
 | 7 | UI | console menu (`main.py`) + Streamlit dashboard with filters (`app.py`) |
-| 8 | modularity | 13 modules in `src/`; `os`, `pathlib`, `json`, `datetime`, `time`, `sqlite3`, `threading` |
+| 8 | modularity | 16 modules in `src/`; `os`, `pathlib`, `json`, `datetime`, `time`, `sqlite3`, `threading` |
 | 9 | ≥ 2 approaches + baseline | Dummy vs LR vs RF vs HistGB vs LightGBM (quality incl. ROC/PR-AUC, time, memory, size); CSV vs Parquet; pandas vs SQL; random vs group split |
 | 10 | SQLite, ER, ≥ 8 queries | `database.py`, `er_diagram.py`, 12 queries in `queries.py` loaded with `pd.read_sql_query` |
 | 11 | ≥ 500k rows, memory | 581,012 rows; `chunksize=100_000`, int16/uint8 dtypes, Parquet |
@@ -241,7 +309,11 @@ from it.
 * Learning curve (F1-macro vs training size) that justifies using all 581k rows.
 * Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
 * Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
-* Console menu + Streamlit dashboard + Colab defense notebook; 7 tests; pinned versions.
+* Console menu + Streamlit dashboard + Colab defense notebook; 128 tests and CI on
+  Python 3.11–3.14; pinned versions.
+* Class-conditional outlier audit, model-free feature relevance (MI, ε², Cramér's V) and
+  covariate/label shift between areas (PSI, KS, TVD).
+* Generated data dictionary with a test that fails when it drifts from the data.
 * A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference
