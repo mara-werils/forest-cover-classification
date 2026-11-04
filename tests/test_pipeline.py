@@ -53,7 +53,7 @@ def test_database_and_descriptive_queries(sample, tmp_path):
     counts = database.build_database(sample, db_path=db_path)
     assert counts["cell"] == len(sample)
     assert counts["soil_type"] == 40
-    for key, query in QUERIES.items():
+    for query in QUERIES.values():
         if query.get("requires_predictions"):
             continue
         frame = database.read_sql(query["sql"], db_path=db_path)

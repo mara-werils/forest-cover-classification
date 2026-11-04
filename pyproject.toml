@@ -1,0 +1,47 @@
+[project]
+name = "forest-cover-classification"
+version = "1.0.0"
+description = "Forest cover type classification on the UCI Covertype data (581k cells, 7 classes)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Amanbaev Marlen" },
+    { name = "Aktaev Erik" },
+    { name = "Gajiyev Rashad" },
+]
+
+# Dependencies stay pinned in requirements.txt (exact versions behind the
+# numbers in reports/); this file only configures the tools.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: needs the full 581k-row Parquet file (deselect with -m 'not slow')",
+]
+filterwarnings = [
+    # LightGBM / sklearn feature-name notices are not test failures.
+    "ignore::UserWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["notebooks/*.ipynb", ".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # import order
+    "B",   # bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # long plot titles and SQL are easier to read on one line
+    "B905",  # zip() over equal-length label/value lists is intentional
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]

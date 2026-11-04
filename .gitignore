@@ -19,3 +19,4 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 ~$*
+.ruff_cache/

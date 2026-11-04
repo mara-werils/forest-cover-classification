@@ -10,8 +10,18 @@ from contextlib import closing
 
 import pandas as pd
 
-from src import (audit, config, data_loader, database, eda, evaluate, features, models, queries,
-                 robustness)
+from src import (
+    audit,
+    config,
+    data_loader,
+    database,
+    eda,
+    evaluate,
+    features,
+    models,
+    queries,
+    robustness,
+)
 
 MODEL_ORDER = ["baseline_dummy", "logreg", "random_forest", "hist_gb", "lightgbm"]
 

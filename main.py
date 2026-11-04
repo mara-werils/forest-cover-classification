@@ -52,7 +52,7 @@ def ask_int(prompt, default, low, high):
 def sql_menu():
     """List the queries and run the selected one."""
     items = queries.list_queries()
-    for number, (key, title, used) in enumerate(items, start=1):
+    for number, (_key, title, used) in enumerate(items, start=1):
         print(f" {number:>2}. {title}  [{used}]")
     choice = ask_int("Query number", 1, 1, len(items))
     key = items[choice - 1][0]
