@@ -1,0 +1,76 @@
+{
+  "reference": "the other three wilderness areas",
+  "psi_bins": 10,
+  "psi_reading": {
+    "stable": "< 0.10",
+    "moderate": "0.10-0.25",
+    "major": "> 0.25"
+  },
+  "areas": [
+    {
+      "area": "Rawah",
+      "cells": 260796,
+      "mean_numeric_psi": 0.3449,
+      "features_with_major_shift": 3,
+      "most_shifted_feature": "Horizontal_Distance_To_Roadways",
+      "soil_tvd": 0.7766,
+      "label_tvd": 0.2064,
+      "classes_only_in_this_area": [],
+      "classes_missing_here": [
+        "Cottonwood/Willow",
+        "Douglas-fir",
+        "Ponderosa Pine"
+      ],
+      "heldout_f1_macro": 0.3467
+    },
+    {
+      "area": "Neota",
+      "cells": 29884,
+      "mean_numeric_psi": 0.749,
+      "features_with_major_shift": 2,
+      "most_shifted_feature": "Elevation",
+      "soil_tvd": 0.5571,
+      "label_tvd": 0.3157,
+      "classes_only_in_this_area": [],
+      "classes_missing_here": [
+        "Aspen",
+        "Cottonwood/Willow",
+        "Douglas-fir",
+        "Ponderosa Pine"
+      ],
+      "heldout_f1_macro": 0.3147
+    },
+    {
+      "area": "Comanche Peak",
+      "cells": 253364,
+      "mean_numeric_psi": 0.3057,
+      "features_with_major_shift": 2,
+      "most_shifted_feature": "Horizontal_Distance_To_Roadways",
+      "soil_tvd": 0.6957,
+      "label_tvd": 0.0514,
+      "classes_only_in_this_area": [],
+      "classes_missing_here": [
+        "Cottonwood/Willow"
+      ],
+      "heldout_f1_macro": 0.2436
+    },
+    {
+      "area": "Cache la Poudre",
+      "cells": 36968,
+      "mean_numeric_psi": 2.0057,
+      "features_with_major_shift": 9,
+      "most_shifted_feature": "Elevation",
+      "soil_tvd": 0.912,
+      "label_tvd": 0.8778,
+      "classes_only_in_this_area": [
+        "Cottonwood/Willow"
+      ],
+      "classes_missing_here": [
+        "Aspen",
+        "Krummholz",
+        "Spruce/Fir"
+      ],
+      "heldout_f1_macro": 0.2529
+    }
+  ]
+}

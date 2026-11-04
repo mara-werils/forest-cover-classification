@@ -1,0 +1,49 @@
+area,feature,kind,psi,ks,tvd,severity
+Rawah,Elevation,numeric,0.8245,0.1519,,major
+Rawah,Aspect,numeric,0.1762,0.1809,,moderate
+Rawah,Slope,numeric,0.2405,0.2022,,moderate
+Rawah,Horizontal_Distance_To_Hydrology,numeric,0.0419,0.0651,,stable
+Rawah,Vertical_Distance_To_Hydrology,numeric,0.1606,0.1654,,moderate
+Rawah,Horizontal_Distance_To_Roadways,numeric,0.9201,0.4063,,major
+Rawah,Hillshade_9am,numeric,0.2264,0.1975,,moderate
+Rawah,Hillshade_Noon,numeric,0.1583,0.0935,,moderate
+Rawah,Hillshade_3pm,numeric,0.154,0.1549,,moderate
+Rawah,Horizontal_Distance_To_Fire_Points,numeric,0.5466,0.3064,,major
+Rawah,Soil,categorical,9.9316,,0.7766,major
+Rawah,Cover_Type (label),categorical,1.2385,,0.2064,major
+Neota,Elevation,numeric,3.883,0.605,,major
+Neota,Aspect,numeric,0.103,0.1184,,moderate
+Neota,Slope,numeric,0.0516,0.0588,,stable
+Neota,Horizontal_Distance_To_Hydrology,numeric,0.0772,0.1187,,stable
+Neota,Vertical_Distance_To_Hydrology,numeric,0.0344,0.0547,,stable
+Neota,Horizontal_Distance_To_Roadways,numeric,3.0007,0.4697,,major
+Neota,Hillshade_9am,numeric,0.0496,0.0671,,stable
+Neota,Hillshade_Noon,numeric,0.1049,0.111,,moderate
+Neota,Hillshade_3pm,numeric,0.0575,0.0988,,stable
+Neota,Horizontal_Distance_To_Fire_Points,numeric,0.1284,0.1057,,moderate
+Neota,Soil,categorical,3.2725,,0.5571,major
+Neota,Cover_Type (label),categorical,0.9999,,0.3157,major
+Comanche Peak,Elevation,numeric,0.1726,0.0818,,moderate
+Comanche Peak,Aspect,numeric,0.1309,0.1381,,moderate
+Comanche Peak,Slope,numeric,0.1049,0.1392,,moderate
+Comanche Peak,Horizontal_Distance_To_Hydrology,numeric,0.053,0.085,,stable
+Comanche Peak,Vertical_Distance_To_Hydrology,numeric,0.0833,0.1248,,stable
+Comanche Peak,Horizontal_Distance_To_Roadways,numeric,1.2663,0.2861,,major
+Comanche Peak,Hillshade_9am,numeric,0.0794,0.1276,,stable
+Comanche Peak,Hillshade_Noon,numeric,0.1462,0.1235,,moderate
+Comanche Peak,Hillshade_3pm,numeric,0.0572,0.106,,stable
+Comanche Peak,Horizontal_Distance_To_Fire_Points,numeric,0.9633,0.2162,,major
+Comanche Peak,Soil,categorical,6.5762,,0.6957,major
+Comanche Peak,Cover_Type (label),categorical,0.0729,,0.0514,stable
+Cache la Poudre,Elevation,numeric,8.2943,0.9565,,major
+Cache la Poudre,Aspect,numeric,0.2608,0.2122,,major
+Cache la Poudre,Slope,numeric,0.8827,0.3984,,major
+Cache la Poudre,Horizontal_Distance_To_Hydrology,numeric,0.3825,0.1719,,major
+Cache la Poudre,Vertical_Distance_To_Hydrology,numeric,0.1924,0.1717,,moderate
+Cache la Poudre,Horizontal_Distance_To_Roadways,numeric,4.8315,0.6431,,major
+Cache la Poudre,Hillshade_9am,numeric,0.696,0.3194,,major
+Cache la Poudre,Hillshade_Noon,numeric,0.4356,0.2726,,major
+Cache la Poudre,Hillshade_3pm,numeric,0.386,0.1615,,major
+Cache la Poudre,Horizontal_Distance_To_Fire_Points,numeric,3.6954,0.5591,,major
+Cache la Poudre,Soil,categorical,9.731,,0.912,major
+Cache la Poudre,Cover_Type (label),categorical,7.265,,0.8778,major
