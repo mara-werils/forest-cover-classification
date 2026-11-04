@@ -20,7 +20,9 @@ from src import (
     features,
     models,
     queries,
+    relevance,
     robustness,
+    shift,
 )
 
 MODEL_ORDER = ["baseline_dummy", "logreg", "random_forest", "hist_gb", "lightgbm"]
@@ -53,6 +55,22 @@ def step_eda(df=None):
     print(f"Saved {len(figures)} figures to {config.FIGURES_DIR}")
     print("Strongest correlations:", outputs["top_correlations"])
     return outputs
+
+
+def step_stats(df=None):
+    """Model-free statistics: feature relevance and shift between areas.
+
+    Takes a few seconds on all rows; uses permutation_importance.csv and
+    group_validation.json for the comparison when steps 6 / 10 have run.
+    """
+    df = df if df is not None else data_loader.load_parquet()
+    table, summary = relevance.run_relevance(df)
+    relevance.print_relevance(table, summary)
+    print()
+    _, areas = shift.run_shift(df)
+    shift.print_shift(areas)
+    print(f"Saved feature_relevance.* and area_shift.* to {config.REPORTS_DIR}")
+    return summary, areas
 
 
 def step_database(df=None):
@@ -242,7 +260,7 @@ def step_sql_report():
 
 
 def run_all():
-    """Full reproduction: data -> audit -> EDA -> DB -> models -> analysis."""
+    """Full reproduction: data -> audit -> EDA -> DB -> models -> analysis -> stats."""
     start = time.perf_counter()
     df = step_prepare()
     step_audit(df)
@@ -252,4 +270,5 @@ def run_all():
     step_interpret(df)
     step_sql_report()
     robustness.run_robustness(df)
+    step_stats(df)  # last: compares with importance and group validation
     print(f"\nPipeline finished in {(time.perf_counter() - start) / 60:.1f} min")

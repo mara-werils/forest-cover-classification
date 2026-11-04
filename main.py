@@ -21,6 +21,7 @@ MENU = {
     "8": "Predict cover type for your own values",
     "9": "Show experiment results",
     "10": "Robustness: ROC/PR-AUC + unseen-area validation (~25 min)",
+    "11": "Statistics: feature relevance + shift between wilderness areas",
     "0": "Exit",
 }
 
@@ -102,6 +103,7 @@ ACTIONS = {
     "8": prediction_menu,
     "9": show_results,
     "10": robustness.run_robustness,
+    "11": pipeline.step_stats,
 }
 
 
