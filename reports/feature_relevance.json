@@ -1,0 +1,170 @@
+{
+  "rows": 581012,
+  "mi_sample_rows": 60000,
+  "class_entropy_bits": 1.7387,
+  "ranking_by_mutual_info": [
+    "Elevation",
+    "Soil",
+    "Wilderness",
+    "Horizontal_Distance_To_Roadways",
+    "Horizontal_Distance_To_Fire_Points",
+    "Slope",
+    "Hillshade_9am",
+    "Horizontal_Distance_To_Hydrology",
+    "Hillshade_Noon",
+    "Aspect",
+    "Hillshade_3pm",
+    "Vertical_Distance_To_Hydrology"
+  ],
+  "vs_permutation_importance": {
+    "spearman_rho": 0.664,
+    "p_value": 0.0185,
+    "features": 12
+  },
+  "table": [
+    {
+      "feature": "Elevation",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 296887.898723,
+      "p_value": 0.0,
+      "effect_size": 0.510985,
+      "mutual_info_bits": 0.655595,
+      "mi_share_of_class_entropy": 0.377065,
+      "mi_rank": 1
+    },
+    {
+      "feature": "Soil",
+      "kind": "categorical",
+      "test": "chi-square",
+      "effect_measure": "cramers_v",
+      "statistic": 762246.52156,
+      "p_value": 0.0,
+      "effect_size": 0.467536,
+      "mutual_info_bits": 0.583048,
+      "mi_share_of_class_entropy": 0.33534,
+      "mi_rank": 2
+    },
+    {
+      "feature": "Wilderness",
+      "kind": "categorical",
+      "test": "chi-square",
+      "effect_measure": "cramers_v",
+      "statistic": 342443.427849,
+      "p_value": 0.0,
+      "effect_size": 0.443232,
+      "mutual_info_bits": 0.271662,
+      "mi_share_of_class_entropy": 0.156246,
+      "mi_rank": 3
+    },
+    {
+      "feature": "Horizontal_Distance_To_Roadways",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 71068.10181,
+      "p_value": 0.0,
+      "effect_size": 0.122318,
+      "mutual_info_bits": 0.129896,
+      "mi_share_of_class_entropy": 0.074709,
+      "mi_rank": 4
+    },
+    {
+      "feature": "Horizontal_Distance_To_Fire_Points",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 55884.524797,
+      "p_value": 0.0,
+      "effect_size": 0.096185,
+      "mutual_info_bits": 0.104315,
+      "mi_share_of_class_entropy": 0.059997,
+      "mi_rank": 5
+    },
+    {
+      "feature": "Slope",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 32606.978424,
+      "p_value": 0.0,
+      "effect_size": 0.056121,
+      "mutual_info_bits": 0.053576,
+      "mi_share_of_class_entropy": 0.030814,
+      "mi_rank": 6
+    },
+    {
+      "feature": "Hillshade_9am",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 11880.694098,
+      "p_value": 0.0,
+      "effect_size": 0.020448,
+      "mutual_info_bits": 0.044153,
+      "mi_share_of_class_entropy": 0.025395,
+      "mi_rank": 7
+    },
+    {
+      "feature": "Horizontal_Distance_To_Hydrology",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 12059.399805,
+      "p_value": 0.0,
+      "effect_size": 0.020756,
+      "mutual_info_bits": 0.03244,
+      "mi_share_of_class_entropy": 0.018658,
+      "mi_rank": 8
+    },
+    {
+      "feature": "Hillshade_Noon",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 10722.202438,
+      "p_value": 0.0,
+      "effect_size": 0.018454,
+      "mutual_info_bits": 0.032327,
+      "mi_share_of_class_entropy": 0.018593,
+      "mi_rank": 9
+    },
+    {
+      "feature": "Aspect",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 2086.099047,
+      "p_value": 0.0,
+      "effect_size": 0.00359,
+      "mutual_info_bits": 0.030068,
+      "mi_share_of_class_entropy": 0.017294,
+      "mi_rank": 10
+    },
+    {
+      "feature": "Hillshade_3pm",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 3873.176714,
+      "p_value": 0.0,
+      "effect_size": 0.006666,
+      "mutual_info_bits": 0.023389,
+      "mi_share_of_class_entropy": 0.013452,
+      "mi_rank": 11
+    },
+    {
+      "feature": "Vertical_Distance_To_Hydrology",
+      "kind": "numeric",
+      "test": "Kruskal-Wallis",
+      "effect_measure": "epsilon_squared",
+      "statistic": 7959.596476,
+      "p_value": 0.0,
+      "effect_size": 0.0137,
+      "mutual_info_bits": 0.018935,
+      "mi_share_of_class_entropy": 0.010891,
+      "mi_rank": 12
+    }
+  ]
+}
