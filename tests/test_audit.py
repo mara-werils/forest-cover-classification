@@ -126,3 +126,30 @@ def test_print_audit_is_readable(sample, capsys):
     assert "Class shares" in out
     for name in config.COVER_TYPES.values():
         assert name in out
+
+
+def test_class_extremes_are_not_outliers_inside_their_class(make_frame):
+    """Two altitude belts: the high belt is a global outlier but normal for its class."""
+    df = make_frame(n=700)
+    rng = np.random.default_rng(1)
+    low_belt = df[config.TARGET] != 7
+    df.loc[low_belt, "Elevation"] = rng.integers(2400, 2600, low_belt.sum())
+    df.loc[~low_belt, "Elevation"] = rng.integers(3600, 3700, (~low_belt).sum())
+    df.loc[0, "Elevation"] = 5000        # row 0 is class 1: odd globally AND in its class
+
+    info = audit.class_conditional_outliers(df, columns=["Elevation"])["Elevation"]
+    krummholz_rows = int((~low_belt).sum())
+    assert info["global_outliers"] == krummholz_rows + 1
+    assert info["explained_by_class"] == krummholz_rows
+    assert info["outlier_in_both"] == 1
+    assert info["within_class_outliers"] == 1
+    assert info["within_class_pct_by_class"]["Krummholz"] == 0
+
+
+def test_run_audit_contains_the_class_conditional_section(sample):
+    report = audit.run_audit(sample, save=False)
+    by_class = report["iqr_outliers_by_class"]
+    assert set(by_class) == set(config.NUMERIC_COLS)
+    for col, info in by_class.items():
+        assert info["global_outliers"] == report["iqr_outliers"][col]["outliers"]
+        assert info["explained_by_class"] + info["outlier_in_both"] == info["global_outliers"]

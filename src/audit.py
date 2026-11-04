@@ -1,5 +1,5 @@
 """Data quality audit: missing values, duplicates, one-hot integrity,
-physical ranges, IQR outliers and class balance.
+physical ranges, IQR outliers (global and per cover type) and class balance.
 
 The result is a plain dict (saved as JSON) so it can be shown in the
 console menu, in Streamlit and quoted in the report.
@@ -80,6 +80,48 @@ def iqr_outliers(df, columns=None, k=1.5):
     return summary
 
 
+def class_conditional_outliers(df, columns=None, k=1.5):
+    """Tukey IQR rule applied inside each cover type instead of globally.
+
+    Global fences mix seven altitude belts: a Krummholz cell at 3,700 m is
+    an "outlier" for the whole forest but perfectly typical for Krummholz.
+    Here every row is compared with the fences of its own class, and the
+    report shows how many global outliers are just class extremes
+    (``explained_by_class``) and how many stay unusual inside their class
+    (``within_class_outliers``) - the only candidates for real errors.
+    """
+    columns = columns or config.NUMERIC_COLS
+    target = df[config.TARGET].to_numpy()
+    summary = {}
+    for col in columns:
+        values = df[col].astype("float32")
+        q1, q3 = values.quantile([0.25, 0.75])
+        spread = q3 - q1
+        global_out = ((values < q1 - k * spread) | (values > q3 + k * spread)).to_numpy()
+
+        grouped = values.groupby(target)
+        low_q, high_q = grouped.quantile(0.25), grouped.quantile(0.75)
+        iqr = high_q - low_q
+        lower = (low_q - k * iqr).reindex(target).to_numpy()
+        upper = (high_q + k * iqr).reindex(target).to_numpy()
+        class_out = (values.to_numpy() < lower) | (values.to_numpy() > upper)
+
+        by_class = {}
+        for class_id in sorted(np.unique(target)):
+            mask = target == class_id
+            by_class[config.COVER_TYPES[int(class_id)]] = round(
+                100 * float(class_out[mask].mean()), 2)
+        summary[col] = {
+            "global_outliers": int(global_out.sum()),
+            "within_class_outliers": int(class_out.sum()),
+            "within_class_outliers_pct": round(100 * float(class_out.mean()), 2),
+            "explained_by_class": int((global_out & ~class_out).sum()),
+            "outlier_in_both": int((global_out & class_out).sum()),
+            "within_class_pct_by_class": by_class,
+        }
+    return summary
+
+
 def class_balance(df):
     """Count and share of each cover type, plus the imbalance ratio."""
     counts = df[config.TARGET].value_counts().sort_index()
@@ -112,6 +154,7 @@ def run_audit(df, save=True):
         "one_hot_integrity": one_hot_integrity(df),
         "range_violations": range_violations(df),
         "iqr_outliers": iqr_outliers(df),
+        "iqr_outliers_by_class": class_conditional_outliers(df),
         "suspicious_values": suspicious_values(df),
         "class_balance": class_balance(df),
         "describe": df[config.NUMERIC_COLS].describe().round(2).to_dict(),
@@ -134,6 +177,12 @@ def print_audit(report):
     print("IQR outliers (% of rows):")
     for col, info in report["iqr_outliers"].items():
         print(f"  {col:<36} {info['outliers_pct']:>6.2f}%")
+    if "iqr_outliers_by_class" in report:
+        print("IQR outliers inside each cover type (global -> within class):")
+        for col, info in report["iqr_outliers_by_class"].items():
+            print(f"  {col:<36} {info['global_outliers']:>7,} -> "
+                  f"{info['within_class_outliers']:>7,}  "
+                  f"({info['explained_by_class']:,} are just class extremes)")
     print(f"Suspicious values: {report['suspicious_values']}")
     print("Class shares (%):")
     for name, share in report["class_balance"]["shares_pct"].items():

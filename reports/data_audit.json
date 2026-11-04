@@ -113,6 +113,168 @@
       "outliers_pct": 5.36
     }
   },
+  "iqr_outliers_by_class": {
+    "Elevation": {
+      "global_outliers": 15569,
+      "within_class_outliers": 6242,
+      "within_class_outliers_pct": 1.07,
+      "explained_by_class": 14495,
+      "outlier_in_both": 1074,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 1.86,
+        "Lodgepole Pine": 0.3,
+        "Ponderosa Pine": 0.0,
+        "Cottonwood/Willow": 0.0,
+        "Aspen": 1.91,
+        "Douglas-fir": 2.55,
+        "Krummholz": 4.14
+      }
+    },
+    "Aspect": {
+      "global_outliers": 0,
+      "within_class_outliers": 325,
+      "within_class_outliers_pct": 0.06,
+      "explained_by_class": 0,
+      "outlier_in_both": 0,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 0.0,
+        "Lodgepole Pine": 0.0,
+        "Ponderosa Pine": 0.0,
+        "Cottonwood/Willow": 11.83,
+        "Aspen": 0.0,
+        "Douglas-fir": 0.0,
+        "Krummholz": 0.0
+      }
+    },
+    "Slope": {
+      "global_outliers": 15316,
+      "within_class_outliers": 7676,
+      "within_class_outliers_pct": 1.32,
+      "explained_by_class": 8421,
+      "outlier_in_both": 6895,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 1.75,
+        "Lodgepole Pine": 1.13,
+        "Ponderosa Pine": 0.06,
+        "Cottonwood/Willow": 0.0,
+        "Aspen": 0.33,
+        "Douglas-fir": 0.07,
+        "Krummholz": 3.5
+      }
+    },
+    "Horizontal_Distance_To_Hydrology": {
+      "global_outliers": 14557,
+      "within_class_outliers": 11264,
+      "within_class_outliers_pct": 1.94,
+      "explained_by_class": 3867,
+      "outlier_in_both": 10690,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 1.53,
+        "Lodgepole Pine": 2.49,
+        "Ponderosa Pine": 0.51,
+        "Cottonwood/Willow": 1.53,
+        "Aspen": 3.34,
+        "Douglas-fir": 0.88,
+        "Krummholz": 1.34
+      }
+    },
+    "Vertical_Distance_To_Hydrology": {
+      "global_outliers": 31463,
+      "within_class_outliers": 31792,
+      "within_class_outliers_pct": 5.47,
+      "explained_by_class": 4312,
+      "outlier_in_both": 27151,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 6.04,
+        "Lodgepole Pine": 5.88,
+        "Ponderosa Pine": 2.39,
+        "Cottonwood/Willow": 3.02,
+        "Aspen": 3.15,
+        "Douglas-fir": 1.95,
+        "Krummholz": 3.72
+      }
+    },
+    "Horizontal_Distance_To_Roadways": {
+      "global_outliers": 669,
+      "within_class_outliers": 1475,
+      "within_class_outliers_pct": 0.25,
+      "explained_by_class": 370,
+      "outlier_in_both": 299,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 0.0,
+        "Lodgepole Pine": 0.11,
+        "Ponderosa Pine": 2.0,
+        "Cottonwood/Willow": 0.0,
+        "Aspen": 3.66,
+        "Douglas-fir": 0.65,
+        "Krummholz": 0.0
+      }
+    },
+    "Hillshade_9am": {
+      "global_outliers": 17433,
+      "within_class_outliers": 14418,
+      "within_class_outliers_pct": 2.48,
+      "explained_by_class": 6478,
+      "outlier_in_both": 10955,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 2.69,
+        "Lodgepole Pine": 2.86,
+        "Ponderosa Pine": 0.22,
+        "Cottonwood/Willow": 1.86,
+        "Aspen": 2.04,
+        "Douglas-fir": 0.08,
+        "Krummholz": 1.4
+      }
+    },
+    "Hillshade_Noon": {
+      "global_outliers": 15672,
+      "within_class_outliers": 12165,
+      "within_class_outliers_pct": 2.09,
+      "explained_by_class": 5638,
+      "outlier_in_both": 10034,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 2.39,
+        "Lodgepole Pine": 1.98,
+        "Ponderosa Pine": 1.43,
+        "Cottonwood/Willow": 1.35,
+        "Aspen": 1.02,
+        "Douglas-fir": 1.63,
+        "Krummholz": 2.73
+      }
+    },
+    "Hillshade_3pm": {
+      "global_outliers": 7832,
+      "within_class_outliers": 6358,
+      "within_class_outliers_pct": 1.09,
+      "explained_by_class": 2940,
+      "outlier_in_both": 4892,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 1.08,
+        "Lodgepole Pine": 1.26,
+        "Ponderosa Pine": 0.0,
+        "Cottonwood/Willow": 0.0,
+        "Aspen": 0.0,
+        "Douglas-fir": 0.02,
+        "Krummholz": 2.5
+      }
+    },
+    "Horizontal_Distance_To_Fire_Points": {
+      "global_outliers": 31157,
+      "within_class_outliers": 31446,
+      "within_class_outliers_pct": 5.41,
+      "explained_by_class": 1343,
+      "outlier_in_both": 29814,
+      "within_class_pct_by_class": {
+        "Spruce/Fir": 3.5,
+        "Lodgepole Pine": 7.8,
+        "Ponderosa Pine": 2.87,
+        "Cottonwood/Willow": 0.0,
+        "Aspen": 3.4,
+        "Douglas-fir": 3.37,
+        "Krummholz": 0.0
+      }
+    }
+  },
   "suspicious_values": {
     "hillshade_3pm_zero": 1338,
     "hillshade_9am_zero": 13,
