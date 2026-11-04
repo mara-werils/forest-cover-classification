@@ -6,14 +6,8 @@ Run with:  python -m pytest -q
 import pandas as pd
 import pytest
 
-from src import audit, config, data_loader, database, features, predict
+from src import audit, config, database, features, predict
 from src.queries import QUERIES
-
-
-@pytest.fixture(scope="module")
-def sample():
-    df = pd.read_csv(config.SAMPLE_CSV, dtype=data_loader.optimized_dtypes())
-    return data_loader.collapse_one_hot(df)
 
 
 def test_sample_has_all_classes(sample):
