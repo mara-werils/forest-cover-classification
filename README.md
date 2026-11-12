@@ -46,7 +46,7 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 128 tests, ~5 s (sample + a few checks on the full Parquet)
+python -m pytest -q         # 143 tests, ~5 s (sample + a few checks on the full Parquet)
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
@@ -74,6 +74,7 @@ On macOS LightGBM needs the OpenMP runtime: `brew install libomp`.
  9 - Show experiment results
 10 - Robustness: ROC/PR-AUC + unseen-area validation (~25 min)
 11 - Statistics: feature relevance + shift between wilderness areas
+12 - Feature ablation: do the engineered features help? (~25 min)
  0 - Exit
 ```
 
@@ -100,6 +101,7 @@ forest-cover-classification/
 │   │                     (global and inside each cover type)
 │   ├── eda.py            all EDA figures (+ interactive Plotly scatter, aspect rose, shadows)
 │   ├── relevance.py      model-free feature relevance: Kruskal-Wallis, Cramér's V, mutual info
+│   ├── ablation.py       feature ablation: raw vs engineered features, leave-one-group-out
 │   ├── shift.py          covariate / label shift between wilderness areas (PSI, KS, TVD)
 │   ├── data_dictionary.py  generates docs/DATA_DICTIONARY.md from config + data
 │   ├── database.py       SQLite schema, loading in chunks, experiment / prediction tables
@@ -111,7 +113,7 @@ forest-cover-classification/
 │   ├── pipeline.py       steps that glue the modules together
 │   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
-├── tests/                128 tests: audit, features, predict, database/SQL, EDA, statistics,
+├── tests/                143 tests: audit, features, predict, database/SQL, EDA, statistics, ablation,
 │                         menu, dashboard (headless), data dictionary drift
 ├── data/sample/          1,000-row stratified sample
 ├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
@@ -253,6 +255,37 @@ predicted probabilities (`src/robustness.py`, menu option 10).
 |---|---|
 | ![](reports/figures/10_confusion_best.png) | ![](reports/figures/15_learning_curve.png) |
 
+### Feature ablation: do the engineered features help?
+
+`src/ablation.py` (menu option 12, `make ablation`) retrains Logistic Regression, Random
+Forest and LightGBM with their tuned hyper-parameters on the same 80/20 split, once with
+all features, once with the 10 raw numeric inputs only, and once without each group of the
+8 engineered features. The all-features LightGBM row reproduces the selected model exactly
+(F1-macro 0.9558).
+
+| Feature set | Logistic Regression | Random Forest | LightGBM |
+|---|---|---|---|
+| All features (reference) | 0.5487 | 0.9498 | 0.9558 |
+| without hydrology geometry (Euclidean distance, water elevation) | −0.0025 | −0.0042 | −0.0006 |
+| without distance combinations (hydro + fire, \|hydro − road\|, \|fire − road\|) | **−0.0145** | **−0.0115** | **−0.0061** |
+| without aspect sin/cos | −0.0038 | +0.0014 | +0.0011 |
+| without hillshade mean | −0.0004 | −0.0001 | +0.0007 |
+| raw inputs only | −0.0182 | −0.0146 | −0.0065 |
+
+(F1-macro of the reference, then the change when a group is removed; results in
+`reports/feature_ablation.csv`.)
+
+* The engineered features help every model, most the linear one (+0.018 F1-macro) and least
+  LightGBM (+0.0065, i.e. 0.9493 → 0.9558).
+* Almost all of the gain comes from the **distance combinations**: sums and differences of the
+  distances to water, roads and fire points encode relative position, which trees can only
+  approximate with many axis-parallel splits.
+* The sine/cosine of aspect only helps the linear model; for trees, which can split the raw
+  angle at any two thresholds, it is neutral or slightly negative (within ±0.0015). Hillshade
+  mean adds nothing for any model.
+
+![Feature ablation](reports/figures/23_feature_ablation.png)
+
 ### Group validation: an unseen wilderness area
 
 Neighbouring 30 m cells are spatially correlated and the data have no coordinates, so the
@@ -309,11 +342,12 @@ from it.
 * Learning curve (F1-macro vs training size) that justifies using all 581k rows.
 * Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
 * Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
-* Console menu + Streamlit dashboard + Colab defense notebook; 128 tests and CI on
+* Console menu + Streamlit dashboard + Colab defense notebook; 143 tests and CI on
   Python 3.11–3.14; pinned versions.
 * Class-conditional outlier audit, model-free feature relevance (MI, ε², Cramér's V) and
   covariate/label shift between areas (PSI, KS, TVD).
 * Generated data dictionary with a test that fails when it drifts from the data.
+* Feature ablation (raw vs engineered features, leave-one-group-out) for three model families.
 * A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference

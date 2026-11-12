@@ -63,8 +63,13 @@ def _feature_step():
     return FunctionTransformer(add_engineered_features, validate=False)
 
 
-def linear_preprocessor():
-    """For Logistic Regression: impute + scale numbers, one-hot categories."""
+def linear_preprocessor(numeric_cols=None):
+    """For Logistic Regression: impute + scale numbers, one-hot categories.
+
+    ``numeric_cols`` selects the numeric inputs (default: all raw and
+    engineered columns); the feature ablation passes smaller sets.
+    """
+    numeric_cols = list(numeric_cols) if numeric_cols is not None else NUMERIC_MODEL_COLS
     numeric = Pipeline(
         [("impute", SimpleImputer(strategy="median")), ("scale", StandardScaler())]
     )
@@ -75,21 +80,23 @@ def linear_preprocessor():
         ]
     )
     columns = ColumnTransformer(
-        [("num", numeric, NUMERIC_MODEL_COLS), ("cat", categorical, CATEGORICAL_COLS)]
+        [("num", numeric, numeric_cols), ("cat", categorical, CATEGORICAL_COLS)]
     )
     return Pipeline([("features", _feature_step()), ("columns", columns)])
 
 
-def tree_preprocessor():
+def tree_preprocessor(numeric_cols=None):
     """For tree ensembles: no scaling needed, categories kept as integer codes.
 
     Trees split on thresholds, so monotone rescaling changes nothing;
     keeping Soil as one integer column (instead of 40 one-hot columns)
     makes Random Forest much faster with the same accuracy.
+    ``numeric_cols`` works as in ``linear_preprocessor``.
     """
+    numeric_cols = list(numeric_cols) if numeric_cols is not None else NUMERIC_MODEL_COLS
     columns = ColumnTransformer(
         [
-            ("num", SimpleImputer(strategy="median"), NUMERIC_MODEL_COLS),
+            ("num", SimpleImputer(strategy="median"), numeric_cols),
             ("cat", SimpleImputer(strategy="most_frequent"), CATEGORICAL_COLS),
         ]
     )
