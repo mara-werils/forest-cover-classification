@@ -46,7 +46,7 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 143 tests, ~5 s (sample + a few checks on the full Parquet)
+python -m pytest -q         # 157 tests, ~5 s (sample + a few checks on the full Parquet)
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
@@ -75,6 +75,7 @@ On macOS LightGBM needs the OpenMP runtime: `brew install libomp`.
 10 - Robustness: ROC/PR-AUC + unseen-area validation (~25 min)
 11 - Statistics: feature relevance + shift between wilderness areas
 12 - Feature ablation: do the engineered features help? (~25 min)
+13 - Significance: bootstrap CIs + McNemar tests between models (~15 min)
  0 - Exit
 ```
 
@@ -102,6 +103,7 @@ forest-cover-classification/
 │   ├── eda.py            all EDA figures (+ interactive Plotly scatter, aspect rose, shadows)
 │   ├── relevance.py      model-free feature relevance: Kruskal-Wallis, Cramér's V, mutual info
 │   ├── ablation.py       feature ablation: raw vs engineered features, leave-one-group-out
+│   ├── significance.py   bootstrap CIs of F1-macro, paired bootstrap, McNemar + Holm
 │   ├── shift.py          covariate / label shift between wilderness areas (PSI, KS, TVD)
 │   ├── data_dictionary.py  generates docs/DATA_DICTIONARY.md from config + data
 │   ├── database.py       SQLite schema, loading in chunks, experiment / prediction tables
@@ -113,7 +115,7 @@ forest-cover-classification/
 │   ├── pipeline.py       steps that glue the modules together
 │   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
-├── tests/                143 tests: audit, features, predict, database/SQL, EDA, statistics, ablation,
+├── tests/                157 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance,
 │                         menu, dashboard (headless), data dictionary drift
 ├── data/sample/          1,000-row stratified sample
 ├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
@@ -286,6 +288,43 @@ all features, once with the 10 raw numeric inputs only, and once without each gr
 
 ![Feature ablation](reports/figures/23_feature_ablation.png)
 
+### Are the differences between models real?
+
+The tree ensembles differ by a few thousandths of F1-macro, so `src/significance.py`
+(menu option 13, `make significance`) checks the ranking on the same 116,203 test cells:
+a 95 % bootstrap interval of F1-macro for every model (2,000 resamples), a **paired**
+bootstrap of the difference between two models (both scored on the same resampled cells),
+and McNemar's exact test on the cells where exactly one of the two models is right
+(accuracy view), with Holm correction over the 10 pairs.
+
+| Model | F1-macro | 95 % CI |
+|---|---|---|
+| **LightGBM, balanced weights** | **0.9558** | [0.9525, 0.9589] |
+| HistGradientBoosting | 0.9546 | [0.9512, 0.9578] |
+| LightGBM, no weights | 0.9537 | [0.9503, 0.9572] |
+| Random Forest | 0.9498 | [0.9462, 0.9531] |
+| Logistic Regression | 0.5487 | [0.5415, 0.5557] |
+
+| Selected LightGBM vs | Δ F1-macro, paired 95 % CI | Cells only LightGBM right / only other right | McNemar, Holm p |
+|---|---|---|---|
+| Random Forest | +0.0060 [+0.0032, +0.0090] — significant | 1,177 / 1,003 | 4·10⁻⁴ |
+| HistGradientBoosting | +0.0012 [−0.0009, +0.0034] — **not significant** | 1,116 / 665 | 4·10⁻²⁶ |
+| LightGBM, no weights | +0.0021 [−0.0001, +0.0044] — **not significant** | 694 / 754 | 0.12 |
+
+* LightGBM is significantly better than Random Forest on both F1-macro and accuracy.
+* Against HistGradientBoosting the F1-macro difference is within noise, but LightGBM is
+  right on 1.7× more of the disputed cells (significantly higher accuracy). Choosing
+  LightGBM is therefore justified by accuracy, not by the 0.0012 F1-macro margin;
+  HistGradientBoosting would be an equally valid choice if a smaller and 4× faster-predicting
+  model mattered more (60 vs 91 MB, 101 vs 402 ms per 1k rows).
+* Balanced class weights do not change LightGBM significantly on either metric: the
+  imbalance experiment shows no measurable effect.
+* Retrained here, Random Forest scores 0.9498 instead of 0.9489 in the main table (different
+  CPU / thread count); LightGBM is the committed model and HistGradientBoosting reproduces
+  exactly. Test-split predictions of every model: `reports/test_predictions.parquet`.
+
+![Model significance](reports/figures/24_model_significance.png)
+
 ### Group validation: an unseen wilderness area
 
 Neighbouring 30 m cells are spatially correlated and the data have no coordinates, so the
@@ -342,12 +381,13 @@ from it.
 * Learning curve (F1-macro vs training size) that justifies using all 581k rows.
 * Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
 * Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
-* Console menu + Streamlit dashboard + Colab defense notebook; 143 tests and CI on
+* Console menu + Streamlit dashboard + Colab defense notebook; 157 tests and CI on
   Python 3.11–3.14; pinned versions.
 * Class-conditional outlier audit, model-free feature relevance (MI, ε², Cramér's V) and
   covariate/label shift between areas (PSI, KS, TVD).
 * Generated data dictionary with a test that fails when it drifts from the data.
 * Feature ablation (raw vs engineered features, leave-one-group-out) for three model families.
+* Statistical significance of the model ranking: bootstrap CIs, paired bootstrap, McNemar + Holm.
 * A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference

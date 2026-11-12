@@ -1,0 +1,11 @@
+model_a,model_b,delta_f1_macro,delta_ci_low,delta_ci_high,share_a_not_better,only_a_right,only_b_right,mcnemar_p,mcnemar_p_holm,f1_difference_significant,accuracy_difference_significant
+random_forest,logreg,0.401,0.3942,0.4079,0.0,28996,956,0.0,0.0,True,True
+hist_gb,logreg,0.4059,0.3985,0.4131,0.0,29139,1376,0.0,0.0,True,True
+lightgbm,logreg,0.4071,0.3997,0.4142,0.0,29423,1209,0.0,0.0,True,True
+lightgbm_unweighted,logreg,0.405,0.3983,0.4127,0.0,29296,1022,0.0,0.0,True,True
+hist_gb,random_forest,0.0048,0.002,0.0077,0.0005,1071,1348,1.936508617051131e-08,7.746034468204525e-08,True,True
+lightgbm,random_forest,0.006,0.0032,0.009,0.0,1177,1003,0.00020967936064476925,0.0004193587212895385,True,True
+lightgbm_unweighted,random_forest,0.0039,0.0011,0.0067,0.003,1109,875,1.6336161768834447e-07,4.900848530650334e-07,True,True
+lightgbm,hist_gb,0.0012,-0.0009,0.0034,0.1365,1116,665,8.14809566532266e-27,4.07404783266133e-26,False,True
+hist_gb,lightgbm_unweighted,0.0009,-0.0016,0.0036,0.281,773,1284,1.2640063198742346e-29,7.584037919245408e-29,False,True
+lightgbm,lightgbm_unweighted,0.0021,-0.0001,0.0044,0.03,694,754,0.12099496710821793,0.12099496710821793,False,False

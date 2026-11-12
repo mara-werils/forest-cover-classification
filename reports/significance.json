@@ -1,0 +1,197 @@
+{
+  "test_rows": 116203,
+  "n_bootstrap": 2000,
+  "alpha": 0.05,
+  "verdicts": [
+    "LightGBM, balanced weights vs Logistic Regression: dF1-macro +0.4071 [+0.3997, +0.4142] -> significant; McNemar 29423 vs 1209 cells, Holm p = 0 -> accuracy difference significant.",
+    "LightGBM, balanced weights vs Random Forest: dF1-macro +0.0060 [+0.0032, +0.0090] -> significant; McNemar 1177 vs 1003 cells, Holm p = 0.00042 -> accuracy difference significant.",
+    "LightGBM, balanced weights vs HistGradientBoosting: dF1-macro +0.0012 [-0.0009, +0.0034] -> NOT significant; McNemar 1116 vs 665 cells, Holm p = 4.1e-26 -> accuracy difference significant.",
+    "LightGBM, balanced weights vs LightGBM, no weights: dF1-macro +0.0021 [-0.0001, +0.0044] -> NOT significant; McNemar 694 vs 754 cells, Holm p = 0.12 -> accuracy difference not significant."
+  ],
+  "models": [
+    {
+      "model": "lightgbm",
+      "f1_macro": 0.9558,
+      "ci_low": 0.9525,
+      "ci_high": 0.9589,
+      "ci_width": 0.0064
+    },
+    {
+      "model": "hist_gb",
+      "f1_macro": 0.9546,
+      "ci_low": 0.9512,
+      "ci_high": 0.9578,
+      "ci_width": 0.0066
+    },
+    {
+      "model": "lightgbm_unweighted",
+      "f1_macro": 0.9537,
+      "ci_low": 0.9503,
+      "ci_high": 0.9572,
+      "ci_width": 0.0069
+    },
+    {
+      "model": "random_forest",
+      "f1_macro": 0.9498,
+      "ci_low": 0.9462,
+      "ci_high": 0.9531,
+      "ci_width": 0.0069
+    },
+    {
+      "model": "logreg",
+      "f1_macro": 0.5487,
+      "ci_low": 0.5415,
+      "ci_high": 0.5557,
+      "ci_width": 0.0142
+    },
+    {
+      "model": "baseline_dummy",
+      "f1_macro": 0.0937,
+      "ci_low": 0.0933,
+      "ci_high": 0.094,
+      "ci_width": 0.0007
+    }
+  ],
+  "pairs": [
+    {
+      "model_a": "random_forest",
+      "model_b": "logreg",
+      "delta_f1_macro": 0.401,
+      "delta_ci_low": 0.3942,
+      "delta_ci_high": 0.4079,
+      "share_a_not_better": 0.0,
+      "only_a_right": 28996,
+      "only_b_right": 956,
+      "mcnemar_p": 0.0,
+      "mcnemar_p_holm": 0.0,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "hist_gb",
+      "model_b": "logreg",
+      "delta_f1_macro": 0.4059,
+      "delta_ci_low": 0.3985,
+      "delta_ci_high": 0.4131,
+      "share_a_not_better": 0.0,
+      "only_a_right": 29139,
+      "only_b_right": 1376,
+      "mcnemar_p": 0.0,
+      "mcnemar_p_holm": 0.0,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "lightgbm",
+      "model_b": "logreg",
+      "delta_f1_macro": 0.4071,
+      "delta_ci_low": 0.3997,
+      "delta_ci_high": 0.4142,
+      "share_a_not_better": 0.0,
+      "only_a_right": 29423,
+      "only_b_right": 1209,
+      "mcnemar_p": 0.0,
+      "mcnemar_p_holm": 0.0,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "lightgbm_unweighted",
+      "model_b": "logreg",
+      "delta_f1_macro": 0.405,
+      "delta_ci_low": 0.3983,
+      "delta_ci_high": 0.4127,
+      "share_a_not_better": 0.0,
+      "only_a_right": 29296,
+      "only_b_right": 1022,
+      "mcnemar_p": 0.0,
+      "mcnemar_p_holm": 0.0,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "hist_gb",
+      "model_b": "random_forest",
+      "delta_f1_macro": 0.0048,
+      "delta_ci_low": 0.002,
+      "delta_ci_high": 0.0077,
+      "share_a_not_better": 0.0005,
+      "only_a_right": 1071,
+      "only_b_right": 1348,
+      "mcnemar_p": 1.936508617051131e-08,
+      "mcnemar_p_holm": 7.746034468204525e-08,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "lightgbm",
+      "model_b": "random_forest",
+      "delta_f1_macro": 0.006,
+      "delta_ci_low": 0.0032,
+      "delta_ci_high": 0.009,
+      "share_a_not_better": 0.0,
+      "only_a_right": 1177,
+      "only_b_right": 1003,
+      "mcnemar_p": 0.00020967936064476925,
+      "mcnemar_p_holm": 0.0004193587212895385,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "lightgbm_unweighted",
+      "model_b": "random_forest",
+      "delta_f1_macro": 0.0039,
+      "delta_ci_low": 0.0011,
+      "delta_ci_high": 0.0067,
+      "share_a_not_better": 0.003,
+      "only_a_right": 1109,
+      "only_b_right": 875,
+      "mcnemar_p": 1.6336161768834447e-07,
+      "mcnemar_p_holm": 4.900848530650334e-07,
+      "f1_difference_significant": true,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "lightgbm",
+      "model_b": "hist_gb",
+      "delta_f1_macro": 0.0012,
+      "delta_ci_low": -0.0009,
+      "delta_ci_high": 0.0034,
+      "share_a_not_better": 0.1365,
+      "only_a_right": 1116,
+      "only_b_right": 665,
+      "mcnemar_p": 8.14809566532266e-27,
+      "mcnemar_p_holm": 4.07404783266133e-26,
+      "f1_difference_significant": false,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "hist_gb",
+      "model_b": "lightgbm_unweighted",
+      "delta_f1_macro": 0.0009,
+      "delta_ci_low": -0.0016,
+      "delta_ci_high": 0.0036,
+      "share_a_not_better": 0.281,
+      "only_a_right": 773,
+      "only_b_right": 1284,
+      "mcnemar_p": 1.2640063198742346e-29,
+      "mcnemar_p_holm": 7.584037919245408e-29,
+      "f1_difference_significant": false,
+      "accuracy_difference_significant": true
+    },
+    {
+      "model_a": "lightgbm",
+      "model_b": "lightgbm_unweighted",
+      "delta_f1_macro": 0.0021,
+      "delta_ci_low": -0.0001,
+      "delta_ci_high": 0.0044,
+      "share_a_not_better": 0.03,
+      "only_a_right": 694,
+      "only_b_right": 754,
+      "mcnemar_p": 0.12099496710821793,
+      "mcnemar_p_holm": 0.12099496710821793,
+      "f1_difference_significant": false,
+      "accuracy_difference_significant": false
+    }
+  ]
+}

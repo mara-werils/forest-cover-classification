@@ -1,0 +1,7 @@
+model,f1_macro,ci_low,ci_high,ci_width
+lightgbm,0.9558,0.9525,0.9589,0.0064
+hist_gb,0.9546,0.9512,0.9578,0.0066
+lightgbm_unweighted,0.9537,0.9503,0.9572,0.0069
+random_forest,0.9498,0.9462,0.9531,0.0069
+logreg,0.5487,0.5415,0.5557,0.0142
+baseline_dummy,0.0937,0.0933,0.094,0.0007
