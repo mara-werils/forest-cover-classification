@@ -46,7 +46,7 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 157 tests, ~5 s (sample + a few checks on the full Parquet)
+python -m pytest -q         # 171 tests, ~5 s (sample + a few checks on the full Parquet)
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
@@ -76,6 +76,7 @@ On macOS LightGBM needs the OpenMP runtime: `brew install libomp`.
 11 - Statistics: feature relevance + shift between wilderness areas
 12 - Feature ablation: do the engineered features help? (~25 min)
 13 - Significance: bootstrap CIs + McNemar tests between models (~15 min)
+14 - Calibration: are the probabilities trustworthy? (~10 min)
  0 - Exit
 ```
 
@@ -104,6 +105,7 @@ forest-cover-classification/
 │   ├── relevance.py      model-free feature relevance: Kruskal-Wallis, Cramér's V, mutual info
 │   ├── ablation.py       feature ablation: raw vs engineered features, leave-one-group-out
 │   ├── significance.py   bootstrap CIs of F1-macro, paired bootstrap, McNemar + Holm
+│   ├── calibration.py    ECE, Brier, log-loss, temperature scaling, prior correction, risk-coverage
 │   ├── shift.py          covariate / label shift between wilderness areas (PSI, KS, TVD)
 │   ├── data_dictionary.py  generates docs/DATA_DICTIONARY.md from config + data
 │   ├── database.py       SQLite schema, loading in chunks, experiment / prediction tables
@@ -115,7 +117,7 @@ forest-cover-classification/
 │   ├── pipeline.py       steps that glue the modules together
 │   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
-├── tests/                157 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance,
+├── tests/                171 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance, calibration,
 │                         menu, dashboard (headless), data dictionary drift
 ├── data/sample/          1,000-row stratified sample
 ├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
@@ -325,6 +327,47 @@ and McNemar's exact test on the cells where exactly one of the two models is rig
 
 ![Model significance](reports/figures/24_model_significance.png)
 
+### Can the predicted probabilities be trusted?
+
+The prediction form shows a probability per cover type, so `src/calibration.py` (menu option
+14, `make calibration`) checks that "80 %" means 80 % on the test cells: expected calibration
+error (ECE, top label, 15 bins), multi-class Brier score and log-loss, plus two repairs that
+leave the trained model untouched: **temperature scaling** (one parameter T, fitted with
+2-fold cross-fitting on the test split so no cell is scored with a T fitted on itself) and
+**prior correction** (undoes balanced class weights by multiplying with the training class
+frequencies).
+
+| Model | Mean confidence | Accuracy | ECE as trained | ECE, temperature scaled (T) | Log-loss before → after |
+|---|---|---|---|---|---|
+| Logistic Regression | 0.727 | 0.731 | 0.0093 | — (already calibrated) | 0.621 |
+| Random Forest | 0.920 | 0.972 | 0.0523 | **0.0014** (0.46) | 0.112 → 0.073 |
+| HistGradientBoosting | 0.947 | 0.970 | 0.0225 | 0.0033 (0.72) | 0.097 → 0.089 |
+| **LightGBM, balanced weights** | 0.960 | 0.974 | 0.0141 | **0.0037** (0.81) | 0.084 → 0.081 |
+| LightGBM, no weights | 0.961 | 0.974 | 0.0129 | 0.0037 (0.83) | 0.084 → 0.082 |
+
+* All tree ensembles are **under-confident**, not over-confident: their mean confidence is
+  below their accuracy (Random Forest most, because averaging 100 deep trees pulls the votes
+  towards the middle). T < 1 sharpens the probabilities; ECE of the selected LightGBM drops
+  from 0.0141 to 0.0037 (−74 %). Temperature scaling never changes the arg-max, so accuracy
+  and F1-macro stay exactly the same.
+* Prior correction does **not** help: for LightGBM it raises log-loss (0.084 → 0.088) and lowers
+  F1-macro (0.9558 → 0.9534). With 500 boosting rounds the balanced weights do not distort
+  the probabilities in the simple way the correction assumes, a negative result kept in
+  `reports/calibration.csv`.
+
+**Using the confidence.** With calibrated probabilities a threshold is meaningful: cells
+below it can be sent to a human, the rest are mapped automatically
+(`reports/risk_coverage.csv`, selected LightGBM, temperature scaled):
+
+| Confidence ≥ | Cells mapped automatically | Accuracy on them | Share of all errors caught for review |
+|---|---|---|---|
+| 0.6 | 98.7 % | 97.9 % | 23 % |
+| 0.8 | 95.1 % | 98.9 % | 59 % |
+| 0.9 | 91.4 % | 99.3 % | 75 % |
+| 0.95 | 86.9 % | 99.5 % | 83 % |
+
+![Calibration](reports/figures/25_calibration.png)
+
 ### Group validation: an unseen wilderness area
 
 Neighbouring 30 m cells are spatially correlated and the data have no coordinates, so the
@@ -381,13 +424,14 @@ from it.
 * Learning curve (F1-macro vs training size) that justifies using all 581k rows.
 * Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
 * Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
-* Console menu + Streamlit dashboard + Colab defense notebook; 157 tests and CI on
+* Console menu + Streamlit dashboard + Colab defense notebook; 171 tests and CI on
   Python 3.11–3.14; pinned versions.
 * Class-conditional outlier audit, model-free feature relevance (MI, ε², Cramér's V) and
   covariate/label shift between areas (PSI, KS, TVD).
 * Generated data dictionary with a test that fails when it drifts from the data.
 * Feature ablation (raw vs engineered features, leave-one-group-out) for three model families.
 * Statistical significance of the model ranking: bootstrap CIs, paired bootstrap, McNemar + Holm.
+* Probability calibration (ECE, Brier, log-loss), temperature scaling, prior correction, risk-coverage.
 * A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference

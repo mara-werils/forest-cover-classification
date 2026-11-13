@@ -8,7 +8,16 @@ python main.py --all    # run the whole pipeline without questions
 
 import sys
 
-from src import ablation, config, pipeline, predict, queries, robustness, significance
+from src import (
+    ablation,
+    calibration,
+    config,
+    pipeline,
+    predict,
+    queries,
+    robustness,
+    significance,
+)
 
 MENU = {
     "1": "Prepare data (download, chunked load, dtype optimisation, Parquet)",
@@ -24,6 +33,7 @@ MENU = {
     "11": "Statistics: feature relevance + shift between wilderness areas",
     "12": "Feature ablation: do the engineered features help? (~25 min)",
     "13": "Significance: bootstrap CIs + McNemar tests between models (~15 min)",
+    "14": "Calibration: are the probabilities trustworthy? (~10 min)",
     "0": "Exit",
 }
 
@@ -108,6 +118,7 @@ ACTIONS = {
     "11": pipeline.step_stats,
     "12": ablation.run_ablation,
     "13": significance.run_significance,
+    "14": calibration.run_calibration,
 }
 
 

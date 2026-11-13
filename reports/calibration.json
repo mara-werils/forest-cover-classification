@@ -1,0 +1,233 @@
+{
+  "test_rows": 116203,
+  "n_bins": 15,
+  "verdicts": [
+    "Logistic Regression: well calibrated as trained (confidence 0.727 vs accuracy 0.731, ECE 0.0093); no repair needed.",
+    "Random Forest: under-confident as trained (confidence 0.920 vs accuracy 0.972, ECE 0.0523); best repair 'temperature' -> ECE 0.0014, log-loss 0.1116 -> 0.0728, F1-macro 0.9498 -> 0.9498, T = [0.464, 0.458].",
+    "HistGradientBoosting: under-confident as trained (confidence 0.947 vs accuracy 0.970, ECE 0.0225); best repair 'temperature' -> ECE 0.0033, log-loss 0.0969 -> 0.0894, F1-macro 0.9546 -> 0.9546, T = [0.707, 0.727].",
+    "LightGBM, balanced weights: under-confident as trained (confidence 0.960 vs accuracy 0.974, ECE 0.0141); best repair 'temperature' -> ECE 0.0037, log-loss 0.0843 -> 0.0813, F1-macro 0.9558 -> 0.9558, T = [0.801, 0.813].",
+    "LightGBM, no weights: under-confident as trained (confidence 0.961 vs accuracy 0.974, ECE 0.0129); best repair 'temperature' -> ECE 0.0037, log-loss 0.0842 -> 0.0819, F1-macro 0.9537 -> 0.9537, T = [0.825, 0.836]."
+  ],
+  "selected_model_method": "temperature",
+  "results": [
+    {
+      "model": "logreg",
+      "method": "raw",
+      "accuracy": 0.7308,
+      "f1_macro": 0.5487,
+      "mean_confidence": 0.7271,
+      "ece": 0.0093,
+      "brier": 0.3753,
+      "log_loss": 0.6211,
+      "temperatures": null
+    },
+    {
+      "model": "logreg",
+      "method": "temperature",
+      "accuracy": 0.7308,
+      "f1_macro": 0.5487,
+      "mean_confidence": 0.7264,
+      "ece": 0.0093,
+      "brier": 0.3753,
+      "log_loss": 0.6211,
+      "temperatures": [
+        1.003,
+        1.005
+      ]
+    },
+    {
+      "model": "random_forest",
+      "method": "raw",
+      "accuracy": 0.9721,
+      "f1_macro": 0.9498,
+      "mean_confidence": 0.9199,
+      "ece": 0.0523,
+      "brier": 0.052,
+      "log_loss": 0.1116,
+      "temperatures": null
+    },
+    {
+      "model": "random_forest",
+      "method": "temperature",
+      "accuracy": 0.9721,
+      "f1_macro": 0.9498,
+      "mean_confidence": 0.9723,
+      "ece": 0.0014,
+      "brier": 0.0415,
+      "log_loss": 0.0728,
+      "temperatures": [
+        0.464,
+        0.458
+      ]
+    },
+    {
+      "model": "hist_gb",
+      "method": "raw",
+      "accuracy": 0.9698,
+      "f1_macro": 0.9546,
+      "mean_confidence": 0.9474,
+      "ece": 0.0225,
+      "brier": 0.0491,
+      "log_loss": 0.0969,
+      "temperatures": null
+    },
+    {
+      "model": "hist_gb",
+      "method": "temperature",
+      "accuracy": 0.9698,
+      "f1_macro": 0.9546,
+      "mean_confidence": 0.9667,
+      "ece": 0.0033,
+      "brier": 0.0463,
+      "log_loss": 0.0894,
+      "temperatures": [
+        0.707,
+        0.727
+      ]
+    },
+    {
+      "model": "hist_gb",
+      "method": "prior_corrected",
+      "accuracy": 0.9686,
+      "f1_macro": 0.9489,
+      "mean_confidence": 0.9477,
+      "ece": 0.021,
+      "brier": 0.0504,
+      "log_loss": 0.1005,
+      "temperatures": null
+    },
+    {
+      "model": "hist_gb",
+      "method": "prior_corrected+temperature",
+      "accuracy": 0.9686,
+      "f1_macro": 0.9489,
+      "mean_confidence": 0.9648,
+      "ece": 0.0039,
+      "brier": 0.0481,
+      "log_loss": 0.0945,
+      "temperatures": [
+        0.747,
+        0.75
+      ]
+    },
+    {
+      "model": "lightgbm",
+      "method": "raw",
+      "accuracy": 0.9736,
+      "f1_macro": 0.9558,
+      "mean_confidence": 0.9598,
+      "ece": 0.0141,
+      "brier": 0.0419,
+      "log_loss": 0.0843,
+      "temperatures": null
+    },
+    {
+      "model": "lightgbm",
+      "method": "temperature",
+      "accuracy": 0.9736,
+      "f1_macro": 0.9558,
+      "mean_confidence": 0.9705,
+      "ece": 0.0037,
+      "brier": 0.0407,
+      "log_loss": 0.0813,
+      "temperatures": [
+        0.801,
+        0.813
+      ]
+    },
+    {
+      "model": "lightgbm",
+      "method": "prior_corrected",
+      "accuracy": 0.9735,
+      "f1_macro": 0.9534,
+      "mean_confidence": 0.9598,
+      "ece": 0.0137,
+      "brier": 0.0429,
+      "log_loss": 0.0882,
+      "temperatures": null
+    },
+    {
+      "model": "lightgbm",
+      "method": "prior_corrected+temperature",
+      "accuracy": 0.9735,
+      "f1_macro": 0.9534,
+      "mean_confidence": 0.9689,
+      "ece": 0.0046,
+      "brier": 0.0419,
+      "log_loss": 0.0861,
+      "temperatures": [
+        0.84,
+        0.837
+      ]
+    },
+    {
+      "model": "lightgbm_unweighted",
+      "method": "raw",
+      "accuracy": 0.9742,
+      "f1_macro": 0.9537,
+      "mean_confidence": 0.9613,
+      "ece": 0.0129,
+      "brier": 0.0417,
+      "log_loss": 0.0842,
+      "temperatures": null
+    },
+    {
+      "model": "lightgbm_unweighted",
+      "method": "temperature",
+      "accuracy": 0.9742,
+      "f1_macro": 0.9537,
+      "mean_confidence": 0.9705,
+      "ece": 0.0037,
+      "brier": 0.0407,
+      "log_loss": 0.0819,
+      "temperatures": [
+        0.825,
+        0.836
+      ]
+    }
+  ],
+  "risk_coverage": [
+    {
+      "method": "temperature",
+      "threshold": 0.5,
+      "coverage": 0.9998,
+      "accuracy_on_kept": 0.9737,
+      "share_of_errors_deferred": 0.0042
+    },
+    {
+      "method": "temperature",
+      "threshold": 0.6,
+      "coverage": 0.9869,
+      "accuracy_on_kept": 0.9795,
+      "share_of_errors_deferred": 0.2338
+    },
+    {
+      "method": "temperature",
+      "threshold": 0.7,
+      "coverage": 0.9713,
+      "accuracy_on_kept": 0.9845,
+      "share_of_errors_deferred": 0.4296
+    },
+    {
+      "method": "temperature",
+      "threshold": 0.8,
+      "coverage": 0.9511,
+      "accuracy_on_kept": 0.9887,
+      "share_of_errors_deferred": 0.5932
+    },
+    {
+      "method": "temperature",
+      "threshold": 0.9,
+      "coverage": 0.9138,
+      "accuracy_on_kept": 0.9929,
+      "share_of_errors_deferred": 0.7525
+    },
+    {
+      "method": "temperature",
+      "threshold": 0.95,
+      "coverage": 0.869,
+      "accuracy_on_kept": 0.9949,
+      "share_of_errors_deferred": 0.8302
+    }
+  ]
+}
