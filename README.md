@@ -14,7 +14,7 @@ strongly imbalanced problem (F1-macro, confusion matrix).
 
 | Member | Group | Main responsibility |
 |---|---|---|
-| Amanbaev Marlen | AAI-2601M | Data loading, Parquet & dtype optimisation, SQLite schema + SQL, console menu, Streamlit app |
+| Amanbayev Marlen | AAI-2601M | Data loading, Parquet & dtype optimisation, SQLite schema + SQL, console menu, Streamlit app |
 | Aktaev Erik | AAI-2601M | Data quality audit, EDA, visualisations, feature relevance and area-shift statistics, tests and CI |
 | Gajiyev Rashad | AAI-2601M | Feature pipelines, model tuning & comparison, interpretation, error analysis |
 

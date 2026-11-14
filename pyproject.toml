@@ -5,7 +5,7 @@ description = "Forest cover type classification on the UCI Covertype data (581k 
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
-    { name = "Amanbaev Marlen" },
+    { name = "Amanbayev Marlen" },
     { name = "Aktaev Erik" },
     { name = "Gajiyev Rashad" },
 ]

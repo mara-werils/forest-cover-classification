@@ -25,7 +25,7 @@ md(f"""
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mara-werils/forest-cover-classification/blob/main/notebooks/Forest_Cover_Defense.ipynb)
 
-Topic 37, Programming for AI. Team: **Amanbaev Marlen (AAI-2601M)**, **Aktaev Erik (AAI-2601M)**,
+Topic 37, Programming for AI. Team: **Amanbayev Marlen (AAI-2601M)**, **Aktaev Erik (AAI-2601M)**,
 **Gajiyev Rashad (AAI-2601M)**.
 
 This notebook walks through the project in the order of the pipeline. It does not contain
