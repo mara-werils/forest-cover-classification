@@ -1,0 +1,72 @@
+{
+  "cells_explained": 1996,
+  "per_class": 200,
+  "per_pair_group": 150,
+  "top_features_overall": {
+    "Water_Elevation": 3.9549,
+    "Elevation": 3.3476,
+    "Wilderness": 2.0762,
+    "Soil": 1.882,
+    "Abs_Hydro_Minus_Road": 0.7777
+  },
+  "attribution_share_by_group": {
+    "[hydrology_geometry]": 0.2867,
+    "Elevation": 0.2007,
+    "Wilderness": 0.1064,
+    "Soil": 0.1017,
+    "[distance_combinations]": 0.084,
+    "Horizontal_Distance_To_Roadways": 0.0465,
+    "Horizontal_Distance_To_Fire_Points": 0.0335,
+    "[aspect_sin_cos]": 0.028,
+    "Vertical_Distance_To_Hydrology": 0.0235,
+    "Hillshade_9am": 0.021,
+    "Horizontal_Distance_To_Hydrology": 0.0192,
+    "Hillshade_3pm": 0.0121,
+    "Slope": 0.0104,
+    "Hillshade_Noon": 0.0097,
+    "[hillshade_mean]": 0.0094,
+    "Aspect": 0.0072
+  },
+  "spruce_lodgepole_crossover_elevation_m": 3042,
+  "pair_error_elevation_median_m": 2991.5,
+  "pair_error_elevation_iqr_m": [
+    2913.0,
+    3097.0
+  ],
+  "agreement_with_permutation_importance": {
+    "spearman_rho": 0.839,
+    "features_compared": 12
+  },
+  "example_record": {
+    "cover_type": "Lodgepole Pine",
+    "bias": -1.529,
+    "score": 1.369,
+    "top_contributions": [
+      {
+        "feature": "Water_Elevation",
+        "value": 2760.0,
+        "contribution": 1.273
+      },
+      {
+        "feature": "Wilderness",
+        "value": 1.0,
+        "contribution": 0.586
+      },
+      {
+        "feature": "Elevation",
+        "value": 2800.0,
+        "contribution": 0.495
+      },
+      {
+        "feature": "Soil",
+        "value": 29.0,
+        "contribution": 0.328
+      },
+      {
+        "feature": "Hydro_Plus_Fire",
+        "value": 2050.0,
+        "contribution": 0.175
+      }
+    ]
+  }
+}

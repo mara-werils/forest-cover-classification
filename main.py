@@ -16,6 +16,7 @@ from src import (
     predict,
     queries,
     robustness,
+    shap_analysis,
     significance,
 )
 
@@ -34,6 +35,7 @@ MENU = {
     "12": "Feature ablation: do the engineered features help? (~25 min)",
     "13": "Significance: bootstrap CIs + McNemar tests between models (~15 min)",
     "14": "Calibration: are the probabilities trustworthy? (~10 min)",
+    "15": "SHAP: why the model decides, Spruce/Fir vs Lodgepole (~5-10 min)",
     "0": "Exit",
 }
 
@@ -119,6 +121,7 @@ ACTIONS = {
     "12": ablation.run_ablation,
     "13": significance.run_significance,
     "14": calibration.run_calibration,
+    "15": shap_analysis.run_shap,
 }
 
 

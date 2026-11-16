@@ -1,0 +1,21 @@
+feature,"Spruce/Fir, correct","Lodgepole, correct",Spruce/Fir predicted as Lodgepole,Lodgepole predicted as Spruce/Fir
+Elevation,0.9507,-0.78366,-0.34344,0.10787
+Aspect,0.03442,-0.0348,-0.00135,-0.00429
+Slope,0.04946,-0.02489,0.04099,0.03152
+Horizontal_Distance_To_Hydrology,0.07989,-0.07693,0.0324,0.09081
+Vertical_Distance_To_Hydrology,0.11444,-0.09187,0.07139,0.05814
+Horizontal_Distance_To_Roadways,0.35575,-0.24007,0.05595,0.11782
+Hillshade_9am,0.06813,-0.03148,0.01984,0.03034
+Hillshade_Noon,0.0339,-0.06112,0.00147,0.01222
+Hillshade_3pm,0.04132,-0.01103,0.01654,0.01995
+Horizontal_Distance_To_Fire_Points,0.29882,-0.14811,0.18037,0.12832
+Euclidean_Distance_To_Hydrology,0.12159,-0.15139,0.06344,0.15311
+Water_Elevation,2.42411,-1.33924,0.01767,0.77086
+Hillshade_Mean,0.02645,-0.01923,0.00567,0.01252
+Hydro_Plus_Fire,0.22519,-0.26355,0.1043,0.11796
+Abs_Hydro_Minus_Road,0.37547,-0.19456,0.18192,0.18918
+Abs_Fire_Minus_Road,0.23723,-0.16395,0.06411,0.07217
+Aspect_Sin,0.01761,-0.02039,-0.00389,-0.00489
+Aspect_Cos,0.08984,-0.0723,0.05375,0.04045
+Wilderness,0.17058,-0.17703,-0.09356,-0.00986
+Soil,0.58268,-0.50477,-0.22459,0.08332

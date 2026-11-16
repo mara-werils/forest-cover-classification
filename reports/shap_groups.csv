@@ -1,0 +1,17 @@
+group,share_of_attribution
+[hydrology_geometry],0.2867
+Elevation,0.20067
+Wilderness,0.10638
+Soil,0.10169
+[distance_combinations],0.08403
+Horizontal_Distance_To_Roadways,0.04652
+Horizontal_Distance_To_Fire_Points,0.03346
+[aspect_sin_cos],0.02797
+Vertical_Distance_To_Hydrology,0.02354
+Hillshade_9am,0.02102
+Horizontal_Distance_To_Hydrology,0.01921
+Hillshade_3pm,0.01212
+Slope,0.01044
+Hillshade_Noon,0.00968
+[hillshade_mean],0.00941
+Aspect,0.00718

@@ -46,7 +46,7 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 171 tests, ~5 s (sample + a few checks on the full Parquet)
+python -m pytest -q         # 181 tests, ~5 s (sample + a few checks on the full Parquet)
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
@@ -77,6 +77,7 @@ On macOS LightGBM needs the OpenMP runtime: `brew install libomp`.
 12 - Feature ablation: do the engineered features help? (~25 min)
 13 - Significance: bootstrap CIs + McNemar tests between models (~15 min)
 14 - Calibration: are the probabilities trustworthy? (~10 min)
+15 - SHAP: why the model decides, Spruce/Fir vs Lodgepole (~5-10 min)
  0 - Exit
 ```
 
@@ -106,6 +107,7 @@ forest-cover-classification/
 │   ├── ablation.py       feature ablation: raw vs engineered features, leave-one-group-out
 │   ├── significance.py   bootstrap CIs of F1-macro, paired bootstrap, McNemar + Holm
 │   ├── calibration.py    ECE, Brier, log-loss, temperature scaling, prior correction, risk-coverage
+│   ├── shap_analysis.py  exact TreeSHAP from LightGBM: per-class drivers, Spruce/Fir vs Lodgepole
 │   ├── shift.py          covariate / label shift between wilderness areas (PSI, KS, TVD)
 │   ├── data_dictionary.py  generates docs/DATA_DICTIONARY.md from config + data
 │   ├── database.py       SQLite schema, loading in chunks, experiment / prediction tables
@@ -117,7 +119,7 @@ forest-cover-classification/
 │   ├── pipeline.py       steps that glue the modules together
 │   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
-├── tests/                171 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance, calibration,
+├── tests/                181 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance, calibration, SHAP,
 │                         menu, dashboard (headless), data dictionary drift
 ├── data/sample/          1,000-row stratified sample
 ├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
@@ -368,6 +370,55 @@ below it can be sent to a human, the rest are mapped automatically
 
 ![Calibration](reports/figures/25_calibration.png)
 
+### Why does the model decide what it decides? (SHAP)
+
+`src/shap_analysis.py` (menu option 15, `make shap`) uses LightGBM's built-in TreeSHAP
+(`predict(..., pred_contrib=True)`, no extra dependency): for every cell and class the raw
+score is split **exactly** into a bias plus one contribution per input column (checked to
+10⁻¹²). TreeSHAP over 500 × 7 trees costs ~0.2 s per cell, so it runs on 1,996 test cells:
+200 per class (rare classes visible) plus 150 in each Spruce/Fir–Lodgepole group below.
+
+**What drives each class** (mean |SHAP| in log-odds on cells of that class, `reports/shap_per_class.csv`):
+
+* Elevation carries **42 %** of all attribution, directly and through `Water_Elevation`
+  (elevation minus the vertical distance to water, 23 % on its own). Krummholz, the
+  alpine class, is decided by elevation more than any other (8.96).
+* Cottonwood/Willow is decided by the **wilderness area** (8.40, more than three times any other class):
+  it grows only in Cache la Poudre, the same fact the area-shift analysis found.
+  Ponderosa Pine leans on **soil** type (5.51).
+* SHAP agrees with permutation importance on the 12 raw inputs (Spearman ρ = 0.84).
+
+**SHAP ≠ necessity.** `Water_Elevation` has the largest SHAP value, yet removing its group
+costs LightGBM only −0.0006 F1-macro in the ablation: it is nearly a copy of Elevation,
+SHAP splits the credit between the two, and without it Elevation takes over. A large SHAP
+value says the model *uses* a column, the ablation says whether it *needs* it.
+
+**Spruce/Fir vs Lodgepole Pine** (69 % of all test errors). The choice between the two is the
+margin f_Spruce − f_Lodgepole; mean contributions (`reports/shap_spruce_vs_lodgepole.csv`):
+
+| Input | Spruce/Fir, correct | Lodgepole, correct | Spruce/Fir → predicted Lodgepole | Lodgepole → predicted Spruce/Fir |
+|---|---|---|---|---|
+| Water_Elevation | +2.42 | −1.34 | +0.02 | +0.77 |
+| Elevation | +0.95 | −0.78 | −0.34 | +0.11 |
+| Soil | +0.58 | −0.51 | −0.23 | +0.08 |
+| Wilderness | +0.17 | −0.18 | −0.09 | −0.01 |
+
+* On correct cells the two elevation columns together push by +3.4 log-odds towards
+  Spruce/Fir on Spruce/Fir cells and by −2.1 towards Lodgepole on Lodgepole cells.
+* The errors are cells that grow **at the other species' altitude**: misclassified Spruce/Fir
+  cells get no push from Water_Elevation (+0.02 instead of +2.42) and a push towards
+  Lodgepole from Elevation and Soil; misclassified Lodgepole cells sit high enough to look
+  like Spruce/Fir.
+* The Elevation contribution changes sign at **~3,040 m**, and the misclassified cells cluster
+  around it (median 2,992 m, IQR 2,913–3,097 m): inside this ~200 m belt both species grow
+  and the terrain inputs cannot tell them apart, which is the limit of the data, not of the model.
+
+`shap_analysis.explain_record(record)` explains a single prediction (e.g. the values from the
+prediction form): the example record is predicted Lodgepole Pine mainly because of
+Water_Elevation 2,760 m (+1.27), the Rawah area (+0.59) and Elevation 2,800 m (+0.50).
+
+![SHAP](reports/figures/26_shap.png)
+
 ### Group validation: an unseen wilderness area
 
 Neighbouring 30 m cells are spatially correlated and the data have no coordinates, so the
@@ -424,7 +475,7 @@ from it.
 * Learning curve (F1-macro vs training size) that justifies using all 581k rows.
 * Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
 * Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
-* Console menu + Streamlit dashboard + Colab defense notebook; 171 tests and CI on
+* Console menu + Streamlit dashboard + Colab defense notebook; 181 tests and CI on
   Python 3.11–3.14; pinned versions.
 * Class-conditional outlier audit, model-free feature relevance (MI, ε², Cramér's V) and
   covariate/label shift between areas (PSI, KS, TVD).
@@ -432,6 +483,7 @@ from it.
 * Feature ablation (raw vs engineered features, leave-one-group-out) for three model families.
 * Statistical significance of the model ranking: bootstrap CIs, paired bootstrap, McNemar + Holm.
 * Probability calibration (ECE, Brier, log-loss), temperature scaling, prior correction, risk-coverage.
+* Exact per-class SHAP values from LightGBM, Spruce/Fir vs Lodgepole error decomposition.
 * A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference

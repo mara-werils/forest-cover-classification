@@ -1,7 +1,7 @@
 # Shortcuts for the common tasks. Uses the active Python (or .venv if present).
 PYTHON ?= $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 
-.PHONY: help install test test-fast lint format app menu stats ablation significance calibration docs all clean
+.PHONY: help install test test-fast lint format app menu stats ablation significance calibration shap docs all clean
 
 help:
 	@echo "make install    install the pinned requirements"
@@ -15,6 +15,7 @@ help:
 	@echo "make ablation  feature ablation: raw vs engineered features (~25 min)"
 	@echo "make significance  bootstrap CIs + McNemar tests between models (~15 min)"
 	@echo "make calibration  calibration of probabilities: ECE, temperature scaling (~10 min)"
+	@echo "make shap       SHAP explanations of the selected LightGBM (~5-10 min)"
 	@echo "make docs       regenerate docs/DATA_DICTIONARY.md from config + data"
 	@echo "make all        full pipeline (python main.py --all, 30-60 min)"
 	@echo "make clean      remove caches"
@@ -51,6 +52,9 @@ significance:
 
 calibration:
 	$(PYTHON) -m src.calibration
+
+shap:
+	$(PYTHON) -m src.shap_analysis
 
 docs:
 	$(PYTHON) -m src.data_dictionary
