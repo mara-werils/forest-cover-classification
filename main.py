@@ -11,6 +11,7 @@ import sys
 from src import (
     ablation,
     calibration,
+    compact,
     config,
     pipeline,
     predict,
@@ -36,6 +37,7 @@ MENU = {
     "13": "Significance: bootstrap CIs + McNemar tests between models (~15 min)",
     "14": "Calibration: are the probabilities trustworthy? (~10 min)",
     "15": "SHAP: why the model decides, Spruce/Fir vs Lodgepole (~5-10 min)",
+    "16": "Compact model: size / speed / quality trade-off (~20-30 min)",
     "0": "Exit",
 }
 
@@ -122,6 +124,7 @@ ACTIONS = {
     "13": significance.run_significance,
     "14": calibration.run_calibration,
     "15": shap_analysis.run_shap,
+    "16": compact.run_compact,
 }
 
 

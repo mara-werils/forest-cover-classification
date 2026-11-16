@@ -46,7 +46,7 @@ pip install -r requirements.txt
 python main.py --all        # full pipeline, ~30–60 min on a laptop CPU
 python main.py              # interactive console menu
 streamlit run app.py        # dashboard with filters + prediction form
-python -m pytest -q         # 181 tests, ~5 s (sample + a few checks on the full Parquet)
+python -m pytest -q         # 190 tests, ~5 s (sample + a few checks on the full Parquet)
 ```
 
 Developed and tested with Python 3.14 on macOS (Apple Silicon, 16 GB RAM); only CPU is
@@ -78,6 +78,7 @@ On macOS LightGBM needs the OpenMP runtime: `brew install libomp`.
 13 - Significance: bootstrap CIs + McNemar tests between models (~15 min)
 14 - Calibration: are the probabilities trustworthy? (~10 min)
 15 - SHAP: why the model decides, Spruce/Fir vs Lodgepole (~5-10 min)
+16 - Compact model: size / speed / quality trade-off (~20-30 min)
  0 - Exit
 ```
 
@@ -108,6 +109,7 @@ forest-cover-classification/
 │   ├── significance.py   bootstrap CIs of F1-macro, paired bootstrap, McNemar + Holm
 │   ├── calibration.py    ECE, Brier, log-loss, temperature scaling, prior correction, risk-coverage
 │   ├── shap_analysis.py  exact TreeSHAP from LightGBM: per-class drivers, Spruce/Fir vs Lodgepole
+│   ├── compact.py        size / speed / quality trade-off of LightGBM, divergence guard
 │   ├── shift.py          covariate / label shift between wilderness areas (PSI, KS, TVD)
 │   ├── data_dictionary.py  generates docs/DATA_DICTIONARY.md from config + data
 │   ├── database.py       SQLite schema, loading in chunks, experiment / prediction tables
@@ -119,7 +121,7 @@ forest-cover-classification/
 │   ├── pipeline.py       steps that glue the modules together
 │   ├── robustness.py     ROC/PR-AUC, leave-one-wilderness-area-out validation
 │   └── predict.py        validated single-record prediction + history (JSON)
-├── tests/                181 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance, calibration, SHAP,
+├── tests/                190 tests: audit, features, predict, database/SQL, EDA, statistics, ablation, significance, calibration, SHAP, compact model,
 │                         menu, dashboard (headless), data dictionary drift
 ├── data/sample/          1,000-row stratified sample
 ├── data/processed/       covtype.parquet (7 MB, versioned); covtype.db is generated
@@ -419,6 +421,41 @@ Water_Elevation 2,760 m (+1.27), the Rawah area (+0.59) and Elevation 2,800 m (+
 
 ![SHAP](reports/figures/26_shap.png)
 
+### Can the model be smaller? (size / speed / quality)
+
+The selected LightGBM is 91 MB and its size grows linearly with the number of trees.
+`src/compact.py` (menu option 16, `make compact`) varies the tree size with the same recipe
+(learning rate 0.05, balanced weights), choosing **on a validation split** (10 % of the
+training data) and touching the test split once: LightGBM with 31, 63, 127 and 255 leaves,
+up to 1,000 rounds, every checkpoint scored with `num_iteration` (one fit per leaf count).
+A configuration whose validation F1-macro falls 0.01 below its own earlier best is flagged as
+diverged and excluded. Full curve: `reports/compact_candidates.csv`.
+
+**Result: the committed model is already on the size–quality frontier.** The smallest
+configuration within 0.002 F1-macro of the best (127 leaves × 1,000 rounds) is the same size
+(90 MB) and 1.7× slower; on the test split it is not significantly different
+(0.9548 vs 0.9558, paired 95 % CI of the difference [−0.0032, +0.0014]). Making the model
+smaller costs quality, and the price is known:
+
+| Size budget | Best configuration (validation) | Size vs selected | Δ F1-macro vs selected configuration |
+|---|---|---|---|
+| ≤ 50 MB | 63 leaves × 1,000 rounds | 51 % | −0.007 |
+| ≤ 25 MB | 63 leaves × 500 rounds | 25 % | −0.031 |
+| ≤ 10 MB | 127 leaves × 100 rounds | 10 % | −0.076 |
+
+(compared with the selected 255 × 500 configuration trained on the same 90 %: validation
+F1-macro 0.9524.) Halving the model would already cost 0.007 F1-macro, well outside the ±0.002 noise level
+of the paired model comparison, so the 91 MB model is kept.
+
+**Pilot with learning rate 0.1** (larger steps give smaller models for the same quality):
+31 leaves diverged on validation (F1-macro 0.846 after 200 rounds, 0.703 after 700), and the
+63 × 1,000 configuration chosen there diverged when refitted on the full training split
+(test F1-macro 0.43 after 0.954 on validation) — the same instability of large steps with
+balanced class weights as the documented HistGradientBoosting run. Hence the divergence guard,
+the 0.05 recipe, and no refit after the choice (`reports/compact_final.json`).
+
+![Size vs quality](reports/figures/27_size_vs_quality.png)
+
 ### Group validation: an unseen wilderness area
 
 Neighbouring 30 m cells are spatially correlated and the data have no coordinates, so the
@@ -475,7 +512,7 @@ from it.
 * Learning curve (F1-macro vs training size) that justifies using all 581k rows.
 * Test predictions stored in SQLite and analysed with SQL (Q10–Q12).
 * Peak training memory measured with a psutil thread (sees LightGBM's C++ allocations).
-* Console menu + Streamlit dashboard + Colab defense notebook; 181 tests and CI on
+* Console menu + Streamlit dashboard + Colab defense notebook; 190 tests and CI on
   Python 3.11–3.14; pinned versions.
 * Class-conditional outlier audit, model-free feature relevance (MI, ε², Cramér's V) and
   covariate/label shift between areas (PSI, KS, TVD).
@@ -484,6 +521,7 @@ from it.
 * Statistical significance of the model ranking: bootstrap CIs, paired bootstrap, McNemar + Holm.
 * Probability calibration (ECE, Brier, log-loss), temperature scaling, prior correction, risk-coverage.
 * Exact per-class SHAP values from LightGBM, Spruce/Fir vs Lodgepole error decomposition.
+* Size / speed / quality frontier of LightGBM with a divergence guard (and a documented diverged pilot).
 * A documented negative result: the diverged HistGB configuration (`reports/diverged_runs.json`).
 
 ## Reference

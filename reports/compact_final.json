@@ -1,0 +1,257 @@
+{
+  "learning_rate": 0.05,
+  "validation_size": 0.1,
+  "tolerance": 0.002,
+  "divergence_drop": 0.01,
+  "diverged_leaf_counts": [],
+  "chosen_params": {
+    "num_leaves": 127,
+    "n_estimators": 1000,
+    "learning_rate": 0.05,
+    "min_child_samples": 10,
+    "class_weight": "balanced"
+  },
+  "test": {
+    "selected": {
+      "f1_macro": 0.9558,
+      "accuracy": 0.9736,
+      "size_mb": 90.96,
+      "predict_ms_per_1000": 278.3,
+      "trained_on_rows": 464809
+    },
+    "compact": {
+      "f1_macro": 0.9548,
+      "accuracy": 0.9724,
+      "size_mb": 89.55,
+      "predict_ms_per_1000": 475.8,
+      "train_seconds": 140.1,
+      "trained_on_rows": 418328
+    }
+  },
+  "compact_minus_selected": {
+    "delta_f1_macro": -0.001,
+    "delta_ci_low": -0.0032,
+    "delta_ci_high": 0.0014,
+    "share_a_not_better": 0.789,
+    "only_a_right": 753,
+    "only_b_right": 897,
+    "mcnemar_p": 0.00042758115688500706
+  },
+  "verdict": "Compact LightGBM (127 leaves x 1000 rounds): 98.4% of the size, 1.7x slower prediction, F1-macro 0.9548 vs 0.9558 (paired 95 % CI of the difference [-0.0032, +0.0014] -> not significant).",
+  "pareto_front_validation": [
+    {
+      "num_leaves": 31,
+      "rounds": 100,
+      "f1_macro": 0.7379,
+      "accuracy": 0.7726,
+      "size_mb": 2.44,
+      "predict_ms_per_1000": 12.8,
+      "diverged": false
+    },
+    {
+      "num_leaves": 63,
+      "rounds": 100,
+      "f1_macro": 0.8113,
+      "accuracy": 0.8336,
+      "size_mb": 4.81,
+      "predict_ms_per_1000": 16.4,
+      "diverged": false
+    },
+    {
+      "num_leaves": 31,
+      "rounds": 300,
+      "f1_macro": 0.8383,
+      "accuracy": 0.8608,
+      "size_mb": 7.3,
+      "predict_ms_per_1000": 77.5,
+      "diverged": false
+    },
+    {
+      "num_leaves": 127,
+      "rounds": 100,
+      "f1_macro": 0.8761,
+      "accuracy": 0.8909,
+      "size_mb": 9.57,
+      "predict_ms_per_1000": 23.5,
+      "diverged": false
+    },
+    {
+      "num_leaves": 31,
+      "rounds": 500,
+      "f1_macro": 0.878,
+      "accuracy": 0.8933,
+      "size_mb": 12.15,
+      "predict_ms_per_1000": 130.9,
+      "diverged": false
+    },
+    {
+      "num_leaves": 63,
+      "rounds": 300,
+      "f1_macro": 0.8942,
+      "accuracy": 0.9098,
+      "size_mb": 14.42,
+      "predict_ms_per_1000": 102.3,
+      "diverged": false
+    },
+    {
+      "num_leaves": 31,
+      "rounds": 700,
+      "f1_macro": 0.8986,
+      "accuracy": 0.9123,
+      "size_mb": 17.0,
+      "predict_ms_per_1000": 184.7,
+      "diverged": false
+    },
+    {
+      "num_leaves": 255,
+      "rounds": 100,
+      "f1_macro": 0.918,
+      "accuracy": 0.9311,
+      "size_mb": 19.13,
+      "predict_ms_per_1000": 30.9,
+      "diverged": false
+    },
+    {
+      "num_leaves": 63,
+      "rounds": 500,
+      "f1_macro": 0.921,
+      "accuracy": 0.9352,
+      "size_mb": 24.04,
+      "predict_ms_per_1000": 167.2,
+      "diverged": false
+    },
+    {
+      "num_leaves": 127,
+      "rounds": 300,
+      "f1_macro": 0.9316,
+      "accuracy": 0.9453,
+      "size_mb": 28.76,
+      "predict_ms_per_1000": 118.2,
+      "diverged": false
+    },
+    {
+      "num_leaves": 63,
+      "rounds": 700,
+      "f1_macro": 0.9353,
+      "accuracy": 0.9509,
+      "size_mb": 33.73,
+      "predict_ms_per_1000": 250.3,
+      "diverged": false
+    },
+    {
+      "num_leaves": 255,
+      "rounds": 200,
+      "f1_macro": 0.9401,
+      "accuracy": 0.9534,
+      "size_mb": 38.45,
+      "predict_ms_per_1000": 86.0,
+      "diverged": false
+    },
+    {
+      "num_leaves": 127,
+      "rounds": 500,
+      "f1_macro": 0.9455,
+      "accuracy": 0.962,
+      "size_mb": 48.21,
+      "predict_ms_per_1000": 220.7,
+      "diverged": false
+    },
+    {
+      "num_leaves": 63,
+      "rounds": 1000,
+      "f1_macro": 0.9457,
+      "accuracy": 0.9616,
+      "size_mb": 48.35,
+      "predict_ms_per_1000": 349.0,
+      "diverged": false
+    },
+    {
+      "num_leaves": 255,
+      "rounds": 300,
+      "f1_macro": 0.9466,
+      "accuracy": 0.9644,
+      "size_mb": 58.02,
+      "predict_ms_per_1000": 148.0,
+      "diverged": false
+    },
+    {
+      "num_leaves": 127,
+      "rounds": 700,
+      "f1_macro": 0.9512,
+      "accuracy": 0.9691,
+      "size_mb": 67.33,
+      "predict_ms_per_1000": 325.1,
+      "diverged": false
+    },
+    {
+      "num_leaves": 127,
+      "rounds": 1000,
+      "f1_macro": 0.9539,
+      "accuracy": 0.9735,
+      "size_mb": 93.89,
+      "predict_ms_per_1000": 470.9,
+      "diverged": false
+    },
+    {
+      "num_leaves": 255,
+      "rounds": 700,
+      "f1_macro": 0.9549,
+      "accuracy": 0.9755,
+      "size_mb": 130.31,
+      "predict_ms_per_1000": 406.3,
+      "diverged": false
+    },
+    {
+      "num_leaves": 255,
+      "rounds": 1000,
+      "f1_macro": 0.9551,
+      "accuracy": 0.9763,
+      "size_mb": 176.77,
+      "predict_ms_per_1000": 604.4,
+      "diverged": false
+    }
+  ],
+  "pilot_learning_rate_0_1": {
+    "learning_rate": 0.1,
+    "31_leaves": "validation F1-macro 0.846 after 200 rounds, 0.703 after 700: diverged",
+    "63_leaves_x_1000_refit_on_full_train": "validation F1-macro 0.954, test F1-macro 0.429: diverged when refitted"
+  },
+  "selected_config_on_validation": {
+    "num_leaves": 255,
+    "rounds": 500,
+    "f1_macro": 0.9524,
+    "size_mb": 94.97
+  },
+  "size_budgets_validation": [
+    {
+      "budget_mb": 10,
+      "num_leaves": 127,
+      "rounds": 100,
+      "size_mb": 9.57,
+      "f1_macro": 0.8761,
+      "f1_change_vs_selected_config": -0.0763,
+      "size_vs_selected_config": 0.101,
+      "predict_ms_per_1000": 23.5
+    },
+    {
+      "budget_mb": 25,
+      "num_leaves": 63,
+      "rounds": 500,
+      "size_mb": 24.04,
+      "f1_macro": 0.921,
+      "f1_change_vs_selected_config": -0.0314,
+      "size_vs_selected_config": 0.253,
+      "predict_ms_per_1000": 167.2
+    },
+    {
+      "budget_mb": 50,
+      "num_leaves": 63,
+      "rounds": 1000,
+      "size_mb": 48.35,
+      "f1_macro": 0.9457,
+      "f1_change_vs_selected_config": -0.0067,
+      "size_vs_selected_config": 0.509,
+      "predict_ms_per_1000": 349.0
+    }
+  ]
+}
